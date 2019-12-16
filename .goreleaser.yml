@@ -32,7 +32,7 @@ builds:
   - amd64
   - 386
   ldflags:
-  - -s -w -X github.com/bflad/tfproviderdocs/version.Version={{.Version}} -X github.com/bflad/tfproviderdocs/version.VersionPrerelease=''
+  - -s -w -X github.com/bflad/tfproviderdocs/version.Version={{.Version}} -X github.com/bflad/tfproviderdocs/version.VersionPrerelease=
   main: .
 changelog:
   skip: true

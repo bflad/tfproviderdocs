@@ -1,3 +1,9 @@
+# v0.1.2
+
+BUG FIXES
+
+* Remove extraneous `-''` from version information
+
 # v0.1.1
 
 BUG FIXES
