@@ -30,9 +30,9 @@ func TestRegistryGuideFileCheck(t *testing.T) {
 			ExpectError: true,
 		},
 		{
-			Name:        "invalid frontmatter without layout",
+			Name:        "invalid frontmatter with layout",
 			BasePath:    "testdata/invalid-registry-files",
-			Path:        "guide_without_layout.md",
+			Path:        "guide_with_layout.md",
 			ExpectError: true,
 		},
 	}
