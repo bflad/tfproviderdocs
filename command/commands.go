@@ -5,7 +5,7 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-const CommandHelpOptionFormat = `  %s\t%s\t\n`
+const CommandHelpOptionFormat = "  %s\t%s\t\n"
 
 func Commands(ui cli.Ui) map[string]cli.CommandFactory {
 	return map[string]cli.CommandFactory{
