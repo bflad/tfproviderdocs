@@ -54,7 +54,7 @@ $ docker run -v $(pwd):/src bflad/tfproviderdocs
 
 ### check Command
 
-The `tfproviderdocs check` command verifies the Terraform Provider documentation with the following checks:
+The `tfproviderdocs check` command verifies the Terraform Provider documentation against the [specifications from Terraform Registry documentation](https://www.terraform.io/docs/registry/providers/docs.html) and common practices across official Terraform Providers. This includes the following checks:
 
 - Verifies that no invalid directories are found in the documentation directory structure.
 - Ensures that there is not a mix (legacy and Terraform Registry) of directory structures, which is not supported during Terraform Registry documentation ingress.
