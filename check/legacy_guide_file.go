@@ -37,6 +37,7 @@ func NewLegacyGuideFileCheck(opts *LegacyGuideFileOptions) *LegacyGuideFileCheck
 		check.Options.FrontMatter = &FrontMatterOptions{}
 	}
 
+	check.Options.FrontMatter.NoSidebarCurrent = true
 	check.Options.FrontMatter.RequireDescription = true
 	check.Options.FrontMatter.RequireLayout = true
 	check.Options.FrontMatter.RequirePageTitle = true

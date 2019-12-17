@@ -38,6 +38,7 @@ func NewRegistryIndexFileCheck(opts *RegistryIndexFileOptions) *RegistryIndexFil
 	}
 
 	check.Options.FrontMatter.NoLayout = true
+	check.Options.FrontMatter.NoSidebarCurrent = true
 	check.Options.FrontMatter.NoSubcategory = true
 
 	return check

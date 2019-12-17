@@ -38,6 +38,7 @@ func NewRegistryGuideFileCheck(opts *RegistryGuideFileOptions) *RegistryGuideFil
 	}
 
 	check.Options.FrontMatter.NoLayout = true
+	check.Options.FrontMatter.NoSidebarCurrent = true
 	check.Options.FrontMatter.RequirePageTitle = true
 
 	return check

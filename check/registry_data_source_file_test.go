@@ -35,6 +35,12 @@ func TestRegistryDataSourceFileCheck(t *testing.T) {
 			Path:        "data_source_with_layout.md",
 			ExpectError: true,
 		},
+		{
+			Name:        "invalid frontmatter with sidebar_current",
+			BasePath:    "testdata/invalid-registry-files",
+			Path:        "data_source_with_sidebar_current.md",
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {

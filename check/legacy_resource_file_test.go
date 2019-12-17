@@ -30,6 +30,12 @@ func TestLegacyResourceFileCheck(t *testing.T) {
 			ExpectError: true,
 		},
 		{
+			Name:        "invalid frontmatter with sidebar_current",
+			BasePath:    "testdata/invalid-legacy-files",
+			Path:        "resource_with_sidebar_current.html.markdown",
+			ExpectError: true,
+		},
+		{
 			Name:        "invalid frontmatter without layout",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "resource_without_layout.html.markdown",

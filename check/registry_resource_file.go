@@ -38,6 +38,7 @@ func NewRegistryResourceFileCheck(opts *RegistryResourceFileOptions) *RegistryRe
 	}
 
 	check.Options.FrontMatter.NoLayout = true
+	check.Options.FrontMatter.NoSidebarCurrent = true
 
 	return check
 }

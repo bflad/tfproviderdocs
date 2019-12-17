@@ -36,6 +36,12 @@ func TestRegistryIndexFileCheck(t *testing.T) {
 			ExpectError: true,
 		},
 		{
+			Name:        "invalid frontmatter with sidebar_current",
+			BasePath:    "testdata/invalid-registry-files",
+			Path:        "index_with_sidebar_current.md",
+			ExpectError: true,
+		},
+		{
 			Name:        "invalid frontmatter with subcategory",
 			BasePath:    "testdata/invalid-registry-files",
 			Path:        "index_with_subcategory.md",

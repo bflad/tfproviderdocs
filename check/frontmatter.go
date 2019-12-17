@@ -12,10 +12,11 @@ type FrontMatterCheck struct {
 
 // FrontMatterData represents the YAML frontmatter of Terraform Provider documentation.
 type FrontMatterData struct {
-	Description *string `yaml:"description,omitempty"`
-	Layout      *string `yaml:"layout,omitempty"`
-	PageTitle   *string `yaml:"page_title,omitempty"`
-	Subcategory *string `yaml:"subcategory,omitempty"`
+	Description    *string `yaml:"description,omitempty"`
+	Layout         *string `yaml:"layout,omitempty"`
+	PageTitle      *string `yaml:"page_title,omitempty"`
+	SidebarCurrent *string `yaml:"sidebar_current,omitempty"`
+	Subcategory    *string `yaml:"subcategory,omitempty"`
 }
 
 // FrontMatterOptions represents configuration options for FrontMatter.
@@ -24,6 +25,7 @@ type FrontMatterOptions struct {
 	NoDescription        bool
 	NoLayout             bool
 	NoPageTitle          bool
+	NoSidebarCurrent     bool
 	NoSubcategory        bool
 	RequireDescription   bool
 	RequireLayout        bool
@@ -61,6 +63,10 @@ func (check *FrontMatterCheck) Run(src []byte) error {
 
 	if check.Options.NoPageTitle && frontMatter.PageTitle != nil {
 		return fmt.Errorf("YAML frontmatter should not contain page_title")
+	}
+
+	if check.Options.NoSidebarCurrent && frontMatter.SidebarCurrent != nil {
+		return fmt.Errorf("YAML frontmatter should not contain sidebar_current")
 	}
 
 	if check.Options.NoSubcategory && frontMatter.Subcategory != nil {

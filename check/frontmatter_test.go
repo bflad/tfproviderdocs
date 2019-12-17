@@ -118,6 +118,21 @@ subcategory: Example Subcategory
 			ExpectError: true,
 		},
 		{
+			Name: "no sidebar_current option",
+			Source: `
+description: |-
+  Example description
+layout: "example"
+page_title: Example Page Title
+sidebar_current: "example_resource"
+subcategory: Example Subcategory
+`,
+			Options: &FrontMatterOptions{
+				NoSidebarCurrent: true,
+			},
+			ExpectError: true,
+		},
+		{
 			Name: "no subcategory option",
 			Source: `
 description: |-

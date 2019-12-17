@@ -37,6 +37,7 @@ func NewLegacyResourceFileCheck(opts *LegacyResourceFileOptions) *LegacyResource
 		check.Options.FrontMatter = &FrontMatterOptions{}
 	}
 
+	check.Options.FrontMatter.NoSidebarCurrent = true
 	check.Options.FrontMatter.RequireDescription = true
 	check.Options.FrontMatter.RequireLayout = true
 	check.Options.FrontMatter.RequirePageTitle = true

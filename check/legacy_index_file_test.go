@@ -36,6 +36,12 @@ func TestLegacyIndexFileCheck(t *testing.T) {
 			ExpectError: true,
 		},
 		{
+			Name:        "invalid frontmatter with sidebar_current",
+			BasePath:    "testdata/invalid-legacy-files",
+			Path:        "index_with_sidebar_current.html.markdown",
+			ExpectError: true,
+		},
+		{
 			Name:        "invalid frontmatter without layout",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "index_without_layout.html.markdown",

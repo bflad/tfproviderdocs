@@ -35,6 +35,12 @@ func TestRegistryGuideFileCheck(t *testing.T) {
 			Path:        "guide_with_layout.md",
 			ExpectError: true,
 		},
+		{
+			Name:        "invalid frontmatter with sidebar_current",
+			BasePath:    "testdata/invalid-registry-files",
+			Path:        "guide_with_sidebar_current.md",
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {

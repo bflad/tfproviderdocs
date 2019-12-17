@@ -1,3 +1,9 @@
+# v0.3.0
+
+ENHANCEMENTS
+
+* check: Verify deprecated `sidebar_current` frontmatter is not present
+
 # v0.2.0
 
 ENHANCEMENTS
