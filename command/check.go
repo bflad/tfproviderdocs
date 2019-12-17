@@ -2,12 +2,19 @@ package command
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 	"text/tabwriter"
 
 	"github.com/bflad/tfproviderdocs/check"
+	tfjson "github.com/hashicorp/terraform-json"
 	"github.com/mitchellh/cli"
 )
 
@@ -16,6 +23,8 @@ type CheckCommandConfig struct {
 	AllowedResourceSubcategories string
 	LogLevel                     string
 	Path                         string
+	ProviderName                 string
+	ProvidersSchemaJson          string
 	RequireGuideSubcategory      bool
 	RequireResourceSubcategory   bool
 }
@@ -31,6 +40,8 @@ func (*CheckCommand) Help() string {
 	LogLevelFlagHelp(opts)
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-guide-subcategories", "Comma separated list of allowed guide frontmatter subcategories.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-resource-subcategories", "Comma separated list of allowed data source and resource frontmatter subcategories.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-name", "Terraform Provider name. Automatically determined if current working directory or provided path is prefixed with terraform-provider-*.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-providers-schema-json", "Path to terraform providers schema -json file. Enables enhanced validations.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
 	opts.Flush()
@@ -58,6 +69,8 @@ func (c *CheckCommand) Run(args []string) int {
 	LogLevelFlag(flags, &config.LogLevel)
 	flags.StringVar(&config.AllowedGuideSubcategories, "allowed-guide-subcategories", "", "")
 	flags.StringVar(&config.AllowedResourceSubcategories, "allowed-resource-subcategories", "", "")
+	flags.StringVar(&config.ProviderName, "provider-name", "", "")
+	flags.StringVar(&config.ProvidersSchemaJson, "providers-schema-json", "", "")
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
 
@@ -73,6 +86,20 @@ func (c *CheckCommand) Run(args []string) int {
 	}
 
 	ConfigureLogging(c.Name(), config.LogLevel)
+
+	if config.ProviderName == "" {
+		if config.Path == "" {
+			config.ProviderName = providerNameFromCurrentDirectory()
+		} else {
+			config.ProviderName = providerNameFromPath(config.Path)
+		}
+
+		if config.ProviderName == "" {
+			log.Printf("[WARN] Unable to determine provider name. Enhanced validations may fail.")
+		} else {
+			log.Printf("[DEBUG] Found provider name: %s", config.ProviderName)
+		}
+	}
 
 	directories, err := check.GetDirectories(config.Path)
 
@@ -129,6 +156,7 @@ func (c *CheckCommand) Run(args []string) int {
 				RequireSubcategory:   config.RequireResourceSubcategory,
 			},
 		},
+		ProviderName: config.ProviderName,
 		RegistryDataSourceFile: &check.RegistryDataSourceFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
@@ -155,6 +183,26 @@ func (c *CheckCommand) Run(args []string) int {
 		},
 	}
 
+	if config.ProvidersSchemaJson != "" {
+		ps, err := providerSchemas(config.ProvidersSchemaJson)
+
+		if err != nil {
+			c.Ui.Error(fmt.Sprintf("Error enabling Terraform Provider schema checks: %s", err))
+			return 1
+		}
+
+		if config.ProviderName == "" {
+			msg := `Unknown provider name for enabling Terraform Provider schema checks.
+
+Check that the current working directory or provided path is prefixed with terraform-provider-*.`
+			c.Ui.Error(msg)
+			return 1
+		}
+
+		checkOpts.SchemaDataSources = providerSchemasDataSources(ps, config.ProviderName)
+		checkOpts.SchemaResources = providerSchemasResources(ps, config.ProviderName)
+	}
+
 	if err := check.NewCheck(checkOpts).Run(directories); err != nil {
 		c.Ui.Error(fmt.Sprintf("Error checking Terraform Provider documentation: %s", err))
 		return 1
@@ -165,4 +213,99 @@ func (c *CheckCommand) Run(args []string) int {
 
 func (c *CheckCommand) Synopsis() string {
 	return "Checks Terraform Provider documentation"
+}
+
+func providerNameFromCurrentDirectory() string {
+	path, _ := os.Getwd()
+
+	return providerNameFromPath(path)
+}
+
+func providerNameFromPath(path string) string {
+	base := filepath.Base(path)
+
+	if strings.ContainsAny(base, "./") {
+		return ""
+	}
+
+	if !strings.HasPrefix(base, "terraform-provider-") {
+		return ""
+	}
+
+	return strings.TrimPrefix(base, "terraform-provider-")
+}
+
+// providerSchemas reads, parses, and validates a provided terraform provider schema -json path.
+func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
+	log.Printf("[DEBUG] Loading providers schema JSON file: %s", path)
+
+	content, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		return nil, fmt.Errorf("error reading providers schema JSON file (%s): %w", path, err)
+	}
+
+	var ps tfjson.ProviderSchemas
+
+	if err := json.Unmarshal(content, &ps); err != nil {
+		return nil, fmt.Errorf("error parsing providers schema JSON file (%s): %w", path, err)
+	}
+
+	if err := ps.Validate(); err != nil {
+		return nil, fmt.Errorf("error validating providers schema JSON file (%s): %w", path, err)
+	}
+
+	return &ps, nil
+}
+
+// providerSchemasDataSources returns all data sources from a terraform providers schema -json provider.
+func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string) map[string]*tfjson.Schema {
+	if ps == nil || providerName == "" {
+		return nil
+	}
+
+	provider, ok := ps.Schemas[providerName]
+
+	if !ok {
+		log.Printf("[WARN] Provider name (%s) not found in provider schema", providerName)
+		return nil
+	}
+
+	dataSources := make([]string, 0, len(provider.DataSourceSchemas))
+
+	for name := range provider.DataSourceSchemas {
+		dataSources = append(dataSources, name)
+	}
+
+	sort.Strings(dataSources)
+
+	log.Printf("[DEBUG] Found provider schema data sources: %v", dataSources)
+
+	return provider.DataSourceSchemas
+}
+
+// providerSchemasResources returns all resources from a terraform providers schema -json provider.
+func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string) map[string]*tfjson.Schema {
+	if ps == nil || providerName == "" {
+		return nil
+	}
+
+	provider, ok := ps.Schemas[providerName]
+
+	if !ok {
+		log.Printf("[WARN] Provider name (%s) not found in provider schema", providerName)
+		return nil
+	}
+
+	resources := make([]string, 0, len(provider.ResourceSchemas))
+
+	for name := range provider.ResourceSchemas {
+		resources = append(resources, name)
+	}
+
+	sort.Strings(resources)
+
+	log.Printf("[DEBUG] Found provider schema data sources: %v", resources)
+
+	return provider.ResourceSchemas
 }

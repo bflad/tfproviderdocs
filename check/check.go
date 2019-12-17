@@ -4,6 +4,7 @@ import (
 	"sort"
 
 	"github.com/hashicorp/go-multierror"
+	tfjson "github.com/hashicorp/terraform-json"
 )
 
 const (
@@ -23,10 +24,15 @@ type CheckOptions struct {
 	LegacyIndexFile      *LegacyIndexFileOptions
 	LegacyResourceFile   *LegacyResourceFileOptions
 
+	ProviderName string
+
 	RegistryDataSourceFile *RegistryDataSourceFileOptions
 	RegistryGuideFile      *RegistryGuideFileOptions
 	RegistryIndexFile      *RegistryIndexFileOptions
 	RegistryResourceFile   *RegistryResourceFileOptions
+
+	SchemaDataSources map[string]*tfjson.Schema
+	SchemaResources   map[string]*tfjson.Schema
 }
 
 func NewCheck(opts *CheckOptions) *Check {
