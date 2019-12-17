@@ -6,6 +6,12 @@ import (
 	"github.com/hashicorp/go-multierror"
 )
 
+const (
+	// Terraform Registry Storage Limits
+	// https://www.terraform.io/docs/registry/providers/docs.html#storage-limits
+	RegistryMaximumNumberOfFiles = 1000
+)
+
 type Check struct {
 	Options *CheckOptions
 }
@@ -40,6 +46,10 @@ func (check *Check) Run(directories map[string][]string) error {
 	}
 
 	if err := MixedDirectoriesCheck(directories); err != nil {
+		return err
+	}
+
+	if err := NumberOfFilesCheck(directories); err != nil {
 		return err
 	}
 

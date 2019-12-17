@@ -2,6 +2,7 @@ package check
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 
 	"github.com/bmatcuk/doublestar"
@@ -72,6 +73,26 @@ func MixedDirectoriesCheck(directories map[string][]string) error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// NumberOfFilesCheck verifies that documentation is below the Terraform Registry storage limit.
+// This check presumes that all provided directories are valid, e.g. that directory checking
+// for invalid or mixed directory structures was previously completed.
+func NumberOfFilesCheck(directories map[string][]string) error {
+	var numberOfFiles int
+
+	for directory, files := range directories {
+		directoryNumberOfFiles := len(files)
+		log.Printf("[TRACE] Found %d documentation files in directory: %s", directoryNumberOfFiles, directory)
+		numberOfFiles = numberOfFiles + directoryNumberOfFiles
+	}
+
+	log.Printf("[DEBUG] Found %d documentation files with limit of %d", numberOfFiles, RegistryMaximumNumberOfFiles)
+	if numberOfFiles >= RegistryMaximumNumberOfFiles {
+		return fmt.Errorf("exceeded maximum (%d) number of documentation files for Terraform Registry: %d", RegistryMaximumNumberOfFiles, numberOfFiles)
 	}
 
 	return nil

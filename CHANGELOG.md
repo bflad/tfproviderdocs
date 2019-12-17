@@ -1,3 +1,9 @@
+# v0.2.0
+
+ENHANCEMENTS
+
+* check: Verify number of documentation files for Terraform Registry storage limits
+
 # v0.1.2
 
 BUG FIXES
