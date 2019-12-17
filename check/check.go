@@ -10,6 +10,7 @@ const (
 	// Terraform Registry Storage Limits
 	// https://www.terraform.io/docs/registry/providers/docs.html#storage-limits
 	RegistryMaximumNumberOfFiles = 1000
+	RegistryMaximumSizeOfFile    = 500000 // 500KB
 )
 
 type Check struct {

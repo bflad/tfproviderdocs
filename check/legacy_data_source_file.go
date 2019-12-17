@@ -50,7 +50,11 @@ func (check *LegacyDataSourceFileCheck) Run(path string) error {
 	log.Printf("[DEBUG] Checking file: %s", fullpath)
 
 	if err := LegacyFileExtensionCheck(path); err != nil {
-		return fmt.Errorf("error checking file (%s) extension: %w", path, err)
+		return fmt.Errorf("%s: error checking file extension: %w", path, err)
+	}
+
+	if err := FileSizeCheck(fullpath); err != nil {
+		return fmt.Errorf("%s: error checking file size: %w", path, err)
 	}
 
 	content, err := ioutil.ReadFile(fullpath)

@@ -64,6 +64,7 @@ The `tfproviderdocs check` command verifies the Terraform Provider documentation
 The validity of files is checked with the following rules:
 
 - Proper file extensions are used (e.g. `.md` for Terraform Registry).
+- Verifies size of file is below Terraform Registry storage limits.
 - YAML frontmatter can be parsed and matches expectations.
 
 The YAML frontmatter checks include some defaults (e.g. no `layout` field for Terraform Registry), but there are some useful flags that can be passed to the command to tune the behavior, especially for larger Terraform Providers.

@@ -3,6 +3,7 @@
 ENHANCEMENTS
 
 * check: Verify number of documentation files for Terraform Registry storage limits
+* check: Verify size of documentation files for Terraform Registry storage limits
 
 # v0.1.2
 

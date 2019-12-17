@@ -1,8 +1,59 @@
 package check
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
 )
+
+func TestFileSizeCheck(t *testing.T) {
+	testCases := []struct {
+		Name        string
+		Size        int64
+		ExpectError bool
+	}{
+		{
+			Name: "under limit",
+			Size: RegistryMaximumSizeOfFile - 1,
+		},
+		{
+			Name:        "on limit",
+			Size:        RegistryMaximumSizeOfFile,
+			ExpectError: true,
+		},
+		{
+			Name:        "over limit",
+			Size:        RegistryMaximumSizeOfFile + 1,
+			ExpectError: true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			file, err := ioutil.TempFile(os.TempDir(), "TestFileSizeCheck")
+
+			if err != nil {
+				t.Fatalf("error creating temporary file: %s", err)
+			}
+
+			defer os.Remove(file.Name())
+
+			if err := file.Truncate(testCase.Size); err != nil {
+				t.Fatalf("error writing temporary file: %s", err)
+			}
+
+			got := FileSizeCheck(file.Name())
+
+			if got == nil && testCase.ExpectError {
+				t.Errorf("expected error, got no error")
+			}
+
+			if got != nil && !testCase.ExpectError {
+				t.Errorf("expected no error, got error: %s", got)
+			}
+		})
+	}
+}
 
 func TestFullPath(t *testing.T) {
 	testCases := []struct {
@@ -14,16 +65,16 @@ func TestFullPath(t *testing.T) {
 		{
 			Name:        "without base path",
 			FileOptions: &FileOptions{},
-			Path:        "docs/resource/thing.md",
-			Expect:      "docs/resource/thing.md",
+			Path:        "docs/resources/thing.md",
+			Expect:      "docs/resources/thing.md",
 		},
 		{
 			Name: "without base path",
 			FileOptions: &FileOptions{
 				BasePath: "/full/path/to",
 			},
-			Path:   "docs/resource/thing.md",
-			Expect: "/full/path/to/docs/resource/thing.md",
+			Path:   "docs/resources/thing.md",
+			Expect: "/full/path/to/docs/resources/thing.md",
 		},
 	}
 
