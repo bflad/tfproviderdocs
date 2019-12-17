@@ -1,0 +1,221 @@
+package check
+
+import (
+	"reflect"
+	"testing"
+
+	tfjson "github.com/hashicorp/terraform-json"
+)
+
+func TestFileHasResource(t *testing.T) {
+	testCases := []struct {
+		Name      string
+		File      string
+		Resources map[string]*tfjson.Schema
+		Expect    bool
+	}{
+		{
+			Name: "found",
+			File: "resource1.md",
+			Resources: map[string]*tfjson.Schema{
+				"test_resource1": &tfjson.Schema{},
+				"test_resource2": &tfjson.Schema{},
+			},
+			Expect: true,
+		},
+		{
+			Name: "not found",
+			File: "resource1.md",
+			Resources: map[string]*tfjson.Schema{
+				"test_resource2": &tfjson.Schema{},
+				"test_resource3": &tfjson.Schema{},
+			},
+			Expect: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got := fileHasResource(testCase.Resources, "test", testCase.File)
+			want := testCase.Expect
+
+			if got != want {
+				t.Errorf("expected %t, got %t", want, got)
+			}
+		})
+	}
+}
+
+func TestFileResourceName(t *testing.T) {
+	testCases := []struct {
+		Name   string
+		File   string
+		Expect string
+	}{
+		{
+			Name:   "filename with single extension",
+			File:   "file.md",
+			Expect: "test_file",
+		},
+		{
+			Name:   "filename with multiple extensions",
+			File:   "file.html.markdown",
+			Expect: "test_file",
+		},
+		{
+			Name:   "full path with single extensions",
+			File:   "docs/resource/thing.md",
+			Expect: "test_thing",
+		},
+		{
+			Name:   "full path with multiple extensions",
+			File:   "website/docs/r/thing.html.markdown",
+			Expect: "test_thing",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got := fileResourceName("test", testCase.File)
+			want := testCase.Expect
+
+			if got != want {
+				t.Errorf("expected %s, got %s", want, got)
+			}
+		})
+	}
+}
+
+func TestResourceFileMismatchCheck(t *testing.T) {
+	testCases := []struct {
+		Name        string
+		Files       []string
+		Resources   map[string]*tfjson.Schema
+		ExpectError bool
+	}{
+		{
+			Name: "all found",
+			Files: []string{
+				"resource1.md",
+				"resource2.md",
+			},
+			Resources: map[string]*tfjson.Schema{
+				"test_resource1": &tfjson.Schema{},
+				"test_resource2": &tfjson.Schema{},
+			},
+		},
+		{
+			Name: "extra",
+			Files: []string{
+				"resource1.md",
+				"resource2.md",
+				"resource3.md",
+			},
+			Resources: map[string]*tfjson.Schema{
+				"test_resource1": &tfjson.Schema{},
+				"test_resource2": &tfjson.Schema{},
+			},
+			ExpectError: true,
+		},
+		{
+			Name: "missing",
+			Files: []string{
+				"resource1.md",
+			},
+			Resources: map[string]*tfjson.Schema{
+				"test_resource1": &tfjson.Schema{},
+				"test_resource2": &tfjson.Schema{},
+			},
+			ExpectError: true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got := ResourceFileMismatchCheck("test", "resource", testCase.Resources, testCase.Files)
+
+			if got == nil && testCase.ExpectError {
+				t.Errorf("expected error, got no error")
+			}
+
+			if got != nil && !testCase.ExpectError {
+				t.Errorf("expected no error, got error: %s", got)
+			}
+		})
+	}
+}
+
+func TestResourceHasFile(t *testing.T) {
+	testCases := []struct {
+		Name         string
+		Files        []string
+		ResourceName string
+		Expect       bool
+	}{
+		{
+			Name: "found",
+			Files: []string{
+				"resource1.md",
+				"resource2.md",
+			},
+			ResourceName: "test_resource1",
+			Expect:       true,
+		},
+		{
+			Name: "not found",
+			Files: []string{
+				"resource1.md",
+				"resource2.md",
+			},
+			ResourceName: "test_resource3",
+			Expect:       false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got := resourceHasFile(testCase.Files, "test", testCase.ResourceName)
+			want := testCase.Expect
+
+			if got != want {
+				t.Errorf("expected %t, got %t", want, got)
+			}
+		})
+	}
+}
+
+func TestResourceNames(t *testing.T) {
+	testCases := []struct {
+		Name      string
+		Resources map[string]*tfjson.Schema
+		Expect    []string
+	}{
+		{
+			Name:      "empty",
+			Resources: map[string]*tfjson.Schema{},
+			Expect:    []string{},
+		},
+		{
+			Name: "multiple",
+			Resources: map[string]*tfjson.Schema{
+				"test_resource1": &tfjson.Schema{},
+				"test_resource2": &tfjson.Schema{},
+			},
+			Expect: []string{
+				"test_resource1",
+				"test_resource2",
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got := resourceNames(testCase.Resources)
+			want := testCase.Expect
+
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("expected %v, got %v", want, got)
+			}
+		})
+	}
+}

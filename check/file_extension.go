@@ -81,3 +81,20 @@ func IsValidRegistryFileExtension(fileExtension string) bool {
 
 	return false
 }
+
+// TrimFileExtension removes file extensions including those with multiple periods.
+func TrimFileExtension(path string) string {
+	filename := filepath.Base(path)
+
+	if filename == "." {
+		return ""
+	}
+
+	dotIndex := strings.IndexByte(filename, '.')
+
+	if dotIndex > 0 {
+		return filename[:dotIndex]
+	}
+
+	return filename
+}

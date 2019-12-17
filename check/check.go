@@ -8,6 +8,9 @@ import (
 )
 
 const (
+	ResourceTypeDataSource = "data source"
+	ResourceTypeResource   = "resource"
+
 	// Terraform Registry Storage Limits
 	// https://www.terraform.io/docs/registry/providers/docs.html#storage-limits
 	RegistryMaximumNumberOfFiles = 1000
@@ -58,6 +61,34 @@ func (check *Check) Run(directories map[string][]string) error {
 
 	if err := NumberOfFilesCheck(directories); err != nil {
 		return err
+	}
+
+	if len(check.Options.SchemaDataSources) > 0 && false {
+		var dataSourceFiles []string
+
+		if files, ok := directories[RegistryDataSourcesDirectory]; ok {
+			dataSourceFiles = files
+		} else if files, ok := directories[LegacyDataSourcesDirectory]; ok {
+			dataSourceFiles = files
+		}
+
+		if err := ResourceFileMismatchCheck(check.Options.ProviderName, ResourceTypeDataSource, check.Options.SchemaDataSources, dataSourceFiles); err != nil {
+			return err
+		}
+	}
+
+	if len(check.Options.SchemaResources) > 0 {
+		var resourceFiles []string
+
+		if files, ok := directories[RegistryResourcesDirectory]; ok {
+			resourceFiles = files
+		} else if files, ok := directories[LegacyResourcesDirectory]; ok {
+			resourceFiles = files
+		}
+
+		if err := ResourceFileMismatchCheck(check.Options.ProviderName, ResourceTypeResource, check.Options.SchemaResources, resourceFiles); err != nil {
+			return err
+		}
 	}
 
 	var result *multierror.Error
