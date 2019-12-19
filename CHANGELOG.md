@@ -1,3 +1,9 @@
+# v0.4.0
+
+ENHANCEMENTS
+
+* check: Improve readability with allowed subcategories values in allowed subcategories frontmatter error
+
 # v0.3.0
 
 ENHANCEMENTS
