@@ -7,6 +7,50 @@ import (
 	tfjson "github.com/hashicorp/terraform-json"
 )
 
+func TestAllowedSubcategoriesFile(t *testing.T) {
+	testCases := []struct {
+		Name        string
+		Path        string
+		Expect      []string
+		ExpectError bool
+	}{
+		{
+			Name: "valid",
+			Path: "testdata/allowed-subcategories.txt",
+			Expect: []string{
+				"Example Subcategory 1",
+				"Example Subcategory 2",
+				"Example Subcategory 3",
+			},
+		},
+		{
+			Name:        "invalid path",
+			Path:        "testdata/does-not-exist.txt",
+			Expect:      nil,
+			ExpectError: true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			got, err := allowedSubcategoriesFile(testCase.Path)
+			want := testCase.Expect
+
+			if err == nil && testCase.ExpectError {
+				t.Errorf("expected error, got no error")
+			}
+
+			if err != nil && !testCase.ExpectError {
+				t.Errorf("expected no error, got error: %s", err)
+			}
+
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("expected: %v, got: %v", want, got)
+			}
+		})
+	}
+}
+
 func TestProviderNameFromPath(t *testing.T) {
 	testCases := []struct {
 		Name   string
