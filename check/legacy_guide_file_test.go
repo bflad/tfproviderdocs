@@ -18,6 +18,11 @@ func TestLegacyGuideFileCheck(t *testing.T) {
 			Path:     "guide.html.markdown",
 		},
 		{
+			Name:     "valid",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "2.0-guide.html.markdown",
+		},
+		{
 			Name:        "invalid extension",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "guide_invalid_extension.txt",

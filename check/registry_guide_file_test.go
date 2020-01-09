@@ -18,6 +18,11 @@ func TestRegistryGuideFileCheck(t *testing.T) {
 			Path:     "guide.md",
 		},
 		{
+			Name:     "valid",
+			BasePath: "testdata/valid-registry-files",
+			Path:     "2.0-guide.md",
+		},
+		{
 			Name:        "invalid extension",
 			BasePath:    "testdata/invalid-registry-files",
 			Path:        "guide_invalid_extension.markdown",
