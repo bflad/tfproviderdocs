@@ -105,6 +105,14 @@ func TestCheck(t *testing.T) {
 				testCase.Options.RegistryResourceFile.FileOptions = fileOpts
 			}
 
+			if testCase.Options.SideNavigation == nil {
+				testCase.Options.SideNavigation = &SideNavigationOptions{}
+			}
+
+			if testCase.Options.SideNavigation.FileOptions == nil {
+				testCase.Options.SideNavigation.FileOptions = fileOpts
+			}
+
 			directories, err := GetDirectories(testCase.BasePath)
 
 			if err != nil {
