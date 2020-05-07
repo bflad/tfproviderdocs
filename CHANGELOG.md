@@ -1,3 +1,9 @@
+# v0.5.1
+
+BUG FIXES
+
+* check: Prevent `mixed Terraform Provider documentation directory layouts found` error when using `website/docs` and `docs/` contains files outside Terraform Provider documentation
+
 # v0.5.0
 
 ENHANCEMENTS
