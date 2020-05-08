@@ -24,8 +24,13 @@ func TestCheck(t *testing.T) {
 			BasePath: "testdata/valid-mixed-directories",
 		},
 		{
-			Name:        "invalid directories",
-			BasePath:    "testdata/invalid-directories",
+			Name:        "invalid registry directories",
+			BasePath:    "testdata/invalid-registry-directories",
+			ExpectError: true,
+		},
+		{
+			Name:        "invalid legacy directories",
+			BasePath:    "testdata/invalid-legacy-directories",
 			ExpectError: true,
 		},
 		{
