@@ -320,7 +320,7 @@ func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
 
 	if err := json.Unmarshal(content, &ps); err != nil {
 		if syntaxError, ok := err.(*json.SyntaxError); ok {
-			return nil, fmt.Errorf("error parsing providers schema JSON file (%s): syntax error at byte offset (%d): original error: %w", path, syntaxError.Offset, err)
+			return nil, fmt.Errorf("error parsing providers schema JSON file (%s): syntax error at byte offset (%d):\noriginal bytes: %v\noriginal error: %w", path, syntaxError.Offset, string(content[0:syntaxError.Offset]), err)
 		}
 
 		return nil, fmt.Errorf("error parsing providers schema JSON file (%s): %w", path, err)
