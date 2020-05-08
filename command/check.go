@@ -316,7 +316,7 @@ func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
 		return nil, fmt.Errorf("error reading providers schema JSON file (%s): %w", path, err)
 	}
 
-	log.Printf("[DEBUG] Providers schema JSON content: %#v", content)
+	log.Printf("[ERROR] Providers schema JSON content: %#v", content)
 
 	var ps tfjson.ProviderSchemas
 
