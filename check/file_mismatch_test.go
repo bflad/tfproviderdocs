@@ -86,11 +86,11 @@ func TestFileResourceName(t *testing.T) {
 	}
 }
 
-func TestResourceFileMismatchCheck(t *testing.T) {
+func TestFileMismatchCheck(t *testing.T) {
 	testCases := []struct {
 		Name        string
 		Files       []string
-		Resources   map[string]*tfjson.Schema
+		Options     *FileMismatchOptions
 		ExpectError bool
 	}{
 		{
@@ -99,40 +99,98 @@ func TestResourceFileMismatchCheck(t *testing.T) {
 				"resource1.md",
 				"resource2.md",
 			},
-			Resources: map[string]*tfjson.Schema{
-				"test_resource1": &tfjson.Schema{},
-				"test_resource2": &tfjson.Schema{},
+			Options: &FileMismatchOptions{
+				ProviderName: "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
 			},
 		},
 		{
-			Name: "extra",
+			Name: "extra file",
 			Files: []string{
 				"resource1.md",
 				"resource2.md",
 				"resource3.md",
 			},
-			Resources: map[string]*tfjson.Schema{
-				"test_resource1": &tfjson.Schema{},
-				"test_resource2": &tfjson.Schema{},
+			Options: &FileMismatchOptions{
+				ProviderName: "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
 			},
 			ExpectError: true,
 		},
 		{
-			Name: "missing",
+			Name: "ignore extra file",
+			Files: []string{
+				"resource1.md",
+				"resource2.md",
+				"resource3.md",
+			},
+			Options: &FileMismatchOptions{
+				IgnoreFileMismatch: []string{"test_resource3"},
+				ProviderName:       "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
+			},
+		},
+		{
+			Name: "missing file",
 			Files: []string{
 				"resource1.md",
 			},
-			Resources: map[string]*tfjson.Schema{
-				"test_resource1": &tfjson.Schema{},
-				"test_resource2": &tfjson.Schema{},
+			Options: &FileMismatchOptions{
+				ProviderName: "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
 			},
 			ExpectError: true,
+		},
+		{
+			Name: "ignore missing file",
+			Files: []string{
+				"resource1.md",
+			},
+			Options: &FileMismatchOptions{
+				IgnoreFileMissing: []string{"test_resource2"},
+				ProviderName:      "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
+			},
+		},
+		{
+			Name: "no files",
+			Options: &FileMismatchOptions{
+				ProviderName: "test",
+				Schemas: map[string]*tfjson.Schema{
+					"test_resource1": {},
+					"test_resource2": {},
+				},
+			},
+		},
+		{
+			Name: "no schemas",
+			Files: []string{
+				"resource1.md",
+			},
+			Options: &FileMismatchOptions{
+				ProviderName: "test",
+			},
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.Name, func(t *testing.T) {
-			got := ResourceFileMismatchCheck("test", "resource", testCase.Resources, testCase.Files)
+			got := NewFileMismatchCheck(testCase.Options).Run(testCase.Files)
 
 			if got == nil && testCase.ExpectError {
 				t.Errorf("expected error, got no error")
