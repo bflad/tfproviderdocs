@@ -1,3 +1,9 @@
+# v0.7.0
+
+BUG FIXES
+
+* check: Return correct valid extensions list with registry directory structure (#38)
+
 # v0.6.0
 
 ENHANCEMENTS
