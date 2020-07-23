@@ -1,5 +1,9 @@
 # v0.7.0
 
+ENHANCEMENTS
+
+* check: Match increased registry max number of files limit from 1000 to 2000
+
 BUG FIXES
 
 * check: Return correct valid extensions list with registry directory structure (#38)
