@@ -35,8 +35,10 @@ jobs:
           *)
             ARTIFACT="${GITHUB_REF}";;
           esac
-          echo "::set-output name=artifact::$ARTIFACT-$(date -u +'%Y-%m-%dT%H:%M')"
+          echo "::set-output name=artifact::$ARTIFACT-$(date -u +'%Y-%m-%dT%H-%M')"
       - uses: actions/upload-artifact@v2
         with:
           name: ${{steps.naming.outputs.artifact}}
-          path: dist/*.zip
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
