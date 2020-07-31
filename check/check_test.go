@@ -20,6 +20,16 @@ func TestCheck(t *testing.T) {
 			BasePath: "testdata/valid-legacy-directories",
 		},
 		{
+			Name:        "valid legacy directories requiring side navigation",
+			BasePath:    "testdata/valid-legacy-directories",
+			ExpectError: true,
+			Options: &CheckOptions{
+				SideNavigation: &SideNavigationOptions{
+					Require: true,
+				},
+			},
+		},
+		{
 			Name:     "valid mixed directories",
 			BasePath: "testdata/valid-mixed-directories",
 		},
@@ -48,6 +58,18 @@ func TestCheck(t *testing.T) {
 
 			if testCase.Options == nil {
 				testCase.Options = &CheckOptions{}
+			}
+
+			if testCase.Options.DataSourceFileMismatch == nil {
+				testCase.Options.DataSourceFileMismatch = &FileMismatchOptions{}
+			}
+
+			if testCase.Options.DataSourceFileMismatch.FileOptions == nil {
+				testCase.Options.DataSourceFileMismatch.FileOptions = fileOpts
+			}
+
+			if testCase.Options.DataSourceFileMismatch.ProviderName == "" {
+				testCase.Options.DataSourceFileMismatch.ProviderName = "test"
 			}
 
 			if testCase.Options.LegacyDataSourceFile == nil {
@@ -82,6 +104,10 @@ func TestCheck(t *testing.T) {
 				testCase.Options.LegacyResourceFile.FileOptions = fileOpts
 			}
 
+			if testCase.Options.ProviderName == "" {
+				testCase.Options.ProviderName = "test"
+			}
+
 			if testCase.Options.RegistryDataSourceFile == nil {
 				testCase.Options.RegistryDataSourceFile = &RegistryDataSourceFileOptions{}
 			}
@@ -114,12 +140,28 @@ func TestCheck(t *testing.T) {
 				testCase.Options.RegistryResourceFile.FileOptions = fileOpts
 			}
 
+			if testCase.Options.ResourceFileMismatch == nil {
+				testCase.Options.ResourceFileMismatch = &FileMismatchOptions{}
+			}
+
+			if testCase.Options.ResourceFileMismatch.FileOptions == nil {
+				testCase.Options.ResourceFileMismatch.FileOptions = fileOpts
+			}
+
+			if testCase.Options.ResourceFileMismatch.ProviderName == "" {
+				testCase.Options.ResourceFileMismatch.ProviderName = "test"
+			}
+
 			if testCase.Options.SideNavigation == nil {
 				testCase.Options.SideNavigation = &SideNavigationOptions{}
 			}
 
 			if testCase.Options.SideNavigation.FileOptions == nil {
 				testCase.Options.SideNavigation.FileOptions = fileOpts
+			}
+
+			if testCase.Options.SideNavigation.ProviderName == "" {
+				testCase.Options.SideNavigation.ProviderName = "test"
 			}
 
 			directories, err := GetDirectories(testCase.BasePath)

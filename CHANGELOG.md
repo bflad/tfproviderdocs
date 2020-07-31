@@ -6,6 +6,7 @@ ENHANCEMENTS
 
 BUG FIXES
 
+* check: Allow legacy directory structure without side navigation (use `-require-side-navigation` flag to keep deprecated old behavior)
 * check: Return correct valid extensions list with registry directory structure (#38)
 
 # v0.6.0
