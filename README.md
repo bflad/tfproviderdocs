@@ -72,6 +72,13 @@ The validity of files is checked with the following rules:
 
 The YAML frontmatter checks include some defaults (e.g. no `layout` field for Terraform Registry), but there are some useful flags that can be passed to the command to tune the behavior, especially for larger Terraform Providers.
 
+The validity of files can also be experimentally checked (via the `-enable-contents-check` flag) with the following rules:
+
+- Ensures all expected headings are present.
+- Verifies heading levels and text.
+- Verifies schema attribute lists are ordered (if `-require-schema-ordering` is provided). Only supports section level lists (not sub-section level lists) currently.
+- Verifies resource type is present in code blocks (e.g. examples and import sections).
+
 For additional information about check flags, you can run `tfproviderdocs check -help`.
 
 ## Development and Testing

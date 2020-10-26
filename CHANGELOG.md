@@ -1,3 +1,9 @@
+# v0.8.0
+
+ENHANCEMENTS
+
+* check: Add experimental `-enable-contents-check` and `-require-schema-ordering` options
+
 # v0.7.0
 
 ENHANCEMENTS
