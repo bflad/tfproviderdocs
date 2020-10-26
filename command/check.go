@@ -24,6 +24,7 @@ type CheckCommandConfig struct {
 	AllowedGuideSubcategoriesFile    string
 	AllowedResourceSubcategories     string
 	AllowedResourceSubcategoriesFile string
+	EnableContentsCheck              bool
 	IgnoreFileMismatchDataSources    string
 	IgnoreFileMismatchResources      string
 	IgnoreFileMissingDataSources     string
@@ -36,6 +37,7 @@ type CheckCommandConfig struct {
 	ProvidersSchemaJson              string
 	RequireGuideSubcategory          bool
 	RequireResourceSubcategory       bool
+	RequireSchemaOrdering            bool
 	RequireSideNavigation            bool
 }
 
@@ -52,6 +54,7 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-guide-subcategories-file", "Path to newline separated file of allowed guide frontmatter subcategories.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-resource-subcategories", "Comma separated list of allowed data source and resource frontmatter subcategories.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-resource-subcategories-file", "Path to newline separated file of allowed data source and resource frontmatter subcategories.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-enable-contents-check", "(Experimental) Enable contents checking.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-data-sources", "Comma separated list of data sources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-resources", "Comma separated list of resources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-data-sources", "Comma separated list of data sources to ignore missing files.")
@@ -63,6 +66,7 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-side-navigation", "Require side navigation (legacy terraform.io ERB file).")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-schema-ordering", "Require schema attribute lists to be alphabetically ordered (requires -enable-contents-check).")
 	opts.Flush()
 
 	helpText := fmt.Sprintf(`
@@ -90,6 +94,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.AllowedGuideSubcategoriesFile, "allowed-guide-subcategories-file", "", "")
 	flags.StringVar(&config.AllowedResourceSubcategories, "allowed-resource-subcategories", "", "")
 	flags.StringVar(&config.AllowedResourceSubcategoriesFile, "allowed-resource-subcategories-file", "", "")
+	flags.BoolVar(&config.EnableContentsCheck, "enable-contents-check", false, "")
 	flags.StringVar(&config.IgnoreFileMismatchDataSources, "ignore-file-mismatch-data-sources", "", "")
 	flags.StringVar(&config.IgnoreFileMismatchResources, "ignore-file-mismatch-resources", "", "")
 	flags.StringVar(&config.IgnoreFileMissingDataSources, "ignore-file-missing-data-sources", "", "")
@@ -100,6 +105,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.ProvidersSchemaJson, "providers-schema-json", "", "")
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
+	flags.BoolVar(&config.RequireSchemaOrdering, "require-schema-ordering", false, "")
 	flags.BoolVar(&config.RequireSideNavigation, "require-side-navigation", false, "")
 
 	if err := flags.Parse(args); err != nil {
@@ -123,7 +129,7 @@ func (c *CheckCommand) Run(args []string) int {
 		}
 
 		if config.ProviderName == "" {
-			log.Printf("[WARN] Unable to determine provider name. Enhanced validations may fail.")
+			log.Printf("[WARN] Unable to determine provider name. Contents and enhanced validations may fail.")
 		} else {
 			log.Printf("[DEBUG] Found provider name: %s", config.ProviderName)
 		}
@@ -256,11 +262,16 @@ Check that the current working directory or provided path is prefixed with terra
 			FileOptions: fileOpts,
 		},
 		LegacyResourceFile: &check.LegacyResourceFileOptions{
+			Contents: &check.ContentsOptions{
+				Enable:                config.EnableContentsCheck,
+				RequireSchemaOrdering: config.RequireSchemaOrdering,
+			},
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
 				AllowedSubcategories: allowedResourceSubcategories,
 				RequireSubcategory:   config.RequireResourceSubcategory,
 			},
+			ProviderName: config.ProviderName,
 		},
 		ProviderName: config.ProviderName,
 		RegistryDataSourceFile: &check.RegistryDataSourceFileOptions{
@@ -281,11 +292,16 @@ Check that the current working directory or provided path is prefixed with terra
 			FileOptions: fileOpts,
 		},
 		RegistryResourceFile: &check.RegistryResourceFileOptions{
+			Contents: &check.ContentsOptions{
+				Enable:                config.EnableContentsCheck,
+				RequireSchemaOrdering: config.RequireSchemaOrdering,
+			},
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
 				AllowedSubcategories: allowedResourceSubcategories,
 				RequireSubcategory:   config.RequireResourceSubcategory,
 			},
+			ProviderName: config.ProviderName,
 		},
 		ResourceFileMismatch: &check.FileMismatchOptions{
 			IgnoreFileMismatch: ignoreFileMismatchResources,

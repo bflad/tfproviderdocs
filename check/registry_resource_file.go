@@ -11,7 +11,9 @@ import (
 type RegistryResourceFileOptions struct {
 	*FileOptions
 
-	FrontMatter *FrontMatterOptions
+	Contents     *ContentsOptions
+	FrontMatter  *FrontMatterOptions
+	ProviderName string
 }
 
 type RegistryResourceFileCheck struct {
@@ -27,6 +29,14 @@ func NewRegistryResourceFileCheck(opts *RegistryResourceFileOptions) *RegistryRe
 
 	if check.Options == nil {
 		check.Options = &RegistryResourceFileOptions{}
+	}
+
+	if check.Options.Contents == nil {
+		check.Options.Contents = &ContentsOptions{}
+	}
+
+	if check.Options.Contents.ProviderName == "" {
+		check.Options.Contents.ProviderName = check.Options.ProviderName
 	}
 
 	if check.Options.FileOptions == nil {
@@ -64,6 +74,10 @@ func (check *RegistryResourceFileCheck) Run(path string) error {
 
 	if err := NewFrontMatterCheck(check.Options.FrontMatter).Run(content); err != nil {
 		return fmt.Errorf("%s: error checking file frontmatter: %w", path, err)
+	}
+
+	if err := NewContentsCheck(check.Options.Contents).Run(fullpath); err != nil {
+		return fmt.Errorf("%s: error checking file contents: %w", path, err)
 	}
 
 	return nil
