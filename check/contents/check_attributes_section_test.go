@@ -18,6 +18,11 @@ func TestCheckAttributesSection(t *testing.T) {
 			ProviderName: "test",
 		},
 		{
+			Name:         "passing alternate byline",
+			Path:         "testdata/attributes/passing_alternate_byline.md",
+			ProviderName: "test",
+		},
+		{
 			Name:         "missing byline",
 			Path:         "testdata/attributes/missing_byline.md",
 			ProviderName: "test",

@@ -1,3 +1,9 @@
+# v0.9.1
+
+BUG FIXES
+
+* check: Accept alternate attribute section byline of `No additional attributes are exported.` with experimental `-enable-contents-check` flag
+
 # v0.9.0
 
 BREAKING CHANGES

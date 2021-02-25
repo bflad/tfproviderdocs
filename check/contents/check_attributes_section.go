@@ -36,16 +36,19 @@ func (d *Document) checkAttributesSection() error {
 	}
 
 	paragraphs := section.Paragraphs
-	expectedBylineText := "In addition to all arguments above, the following attributes are exported:"
+	expectedBylineTexts := []string{
+		"In addition to all arguments above, the following attributes are exported:",
+		"No additional attributes are exported.",
+	}
 
 	switch len(paragraphs) {
 	case 0:
-		return fmt.Errorf("attributes section byline should be: %s", expectedBylineText)
+		return fmt.Errorf("attributes section byline should be: %q or %q", expectedBylineTexts[0], expectedBylineTexts[1])
 	case 1:
 		paragraphText := string(paragraphs[0].Text(d.source))
 
-		if paragraphText != expectedBylineText {
-			return fmt.Errorf("attributes section byline (%s) should be: %s", paragraphText, expectedBylineText)
+		if paragraphText != expectedBylineTexts[0] && paragraphText != expectedBylineTexts[1] {
+			return fmt.Errorf("attributes section byline (%s) should be: %q or %q", paragraphText, expectedBylineTexts[0], expectedBylineTexts[1])
 		}
 	}
 
