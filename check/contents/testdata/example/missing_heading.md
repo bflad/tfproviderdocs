@@ -1,6 +1,6 @@
 Manages an Example Thing.
 
-```hcl
+```terraform
 resource "test_missing_heading" "example" {
   name = "example"
 }

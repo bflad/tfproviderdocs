@@ -1,6 +1,6 @@
 ## Example Usage
 
-```hcl
+```terraform
 resource "test_passing" "example" {
   name = "example"
 }

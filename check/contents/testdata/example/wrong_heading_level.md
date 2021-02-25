@@ -1,6 +1,6 @@
 # Example Usage
 
-```hcl
+```terraform
 resource "test_wrong_heading_level" "example" {
   name = "example"
 }

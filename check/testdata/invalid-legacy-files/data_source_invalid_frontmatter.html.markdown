@@ -12,7 +12,7 @@ Byline.
 
 ## Example Usage
 
-```hcl
+```terraform
 data "example_thing" "example" {
   name = "example"
 }
