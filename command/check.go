@@ -34,6 +34,7 @@ type CheckCommandConfig struct {
 	LogLevel                         string
 	Path                             string
 	ProviderName                     string
+	ProviderSource                   string
 	ProvidersSchemaJson              string
 	RequireGuideSubcategory          bool
 	RequireResourceSubcategory       bool
@@ -61,7 +62,8 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-resources", "Comma separated list of resources to ignore missing files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-side-navigation-data-sources", "Comma separated list of data sources to ignore side navigation (legacy terraform.io ERB file) validation.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-side-navigation-resources", "Comma separated list of resources to ignore side navigation (legacy terraform.io ERB file) validation.")
-	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-name", "Terraform Provider name. Automatically determined if current working directory or provided path is prefixed with terraform-provider-*.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-name", "Terraform Provider short name (e.g. aws). Automatically determined if -provider-source is given or if current working directory or provided path is prefixed with terraform-provider-*.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-source", "Terraform Provider source address (e.g. registry.terraform.io/hashicorp/aws) for Terraform CLI 0.13 and later -providers-schema-json. Automatically sets -provider-name by dropping hostname and namespace prefix.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-providers-schema-json", "Path to terraform providers schema -json file. Enables enhanced validations.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
@@ -102,6 +104,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.IgnoreSideNavigationDataSources, "ignore-side-navigation-data-sources", "", "")
 	flags.StringVar(&config.IgnoreSideNavigationResources, "ignore-side-navigation-resources", "", "")
 	flags.StringVar(&config.ProviderName, "provider-name", "", "")
+	flags.StringVar(&config.ProviderSource, "provider-source", "", "")
 	flags.StringVar(&config.ProvidersSchemaJson, "providers-schema-json", "", "")
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
@@ -121,18 +124,23 @@ func (c *CheckCommand) Run(args []string) int {
 
 	ConfigureLogging(c.Name(), config.LogLevel)
 
+	if config.ProviderName == "" && config.ProviderSource != "" {
+		providerSourceParts := strings.Split(config.ProviderSource, "/")
+		config.ProviderName = providerSourceParts[len(providerSourceParts)-1]
+	}
+
 	if config.ProviderName == "" {
 		if config.Path == "" {
 			config.ProviderName = providerNameFromCurrentDirectory()
 		} else {
 			config.ProviderName = providerNameFromPath(config.Path)
 		}
+	}
 
-		if config.ProviderName == "" {
-			log.Printf("[WARN] Unable to determine provider name. Contents and enhanced validations may fail.")
-		} else {
-			log.Printf("[DEBUG] Found provider name: %s", config.ProviderName)
-		}
+	if config.ProviderName == "" {
+		log.Printf("[WARN] Unable to determine provider name. Contents and enhanced validations may fail.")
+	} else {
+		log.Printf("[DEBUG] Found provider name: %s", config.ProviderName)
 	}
 
 	directories, err := check.GetDirectories(config.Path)
@@ -229,8 +237,8 @@ Check that the current working directory or provided path is prefixed with terra
 			return 1
 		}
 
-		schemaDataSources = providerSchemasDataSources(ps, config.ProviderName)
-		schemaResources = providerSchemasResources(ps, config.ProviderName)
+		schemaDataSources = providerSchemasDataSources(ps, config.ProviderName, config.ProviderSource)
+		schemaResources = providerSchemasResources(ps, config.ProviderName, config.ProviderSource)
 	}
 
 	fileOpts := &check.FileOptions{
@@ -273,7 +281,8 @@ Check that the current working directory or provided path is prefixed with terra
 			},
 			ProviderName: config.ProviderName,
 		},
-		ProviderName: config.ProviderName,
+		ProviderName:   config.ProviderName,
+		ProviderSource: config.ProviderSource,
 		RegistryDataSourceFile: &check.RegistryDataSourceFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
@@ -399,15 +408,19 @@ func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
 }
 
 // providerSchemasDataSources returns all data sources from a terraform providers schema -json provider.
-func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string) map[string]*tfjson.Schema {
-	if ps == nil || providerName == "" {
+func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+	if ps == nil || ps.Schemas == nil {
 		return nil
 	}
 
-	provider, ok := ps.Schemas[providerName]
+	provider, ok := ps.Schemas[providerSource]
 
 	if !ok {
-		log.Printf("[WARN] Provider name (%s) not found in provider schema", providerName)
+		provider, ok = ps.Schemas[providerName]
+	}
+
+	if !ok {
+		log.Printf("[WARN] Provider source (%s) and name (%s) not found in provider schema", providerSource, providerName)
 		return nil
 	}
 
@@ -425,15 +438,19 @@ func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string)
 }
 
 // providerSchemasResources returns all resources from a terraform providers schema -json provider.
-func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string) map[string]*tfjson.Schema {
-	if ps == nil || providerName == "" {
+func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+	if ps == nil || ps.Schemas == nil {
 		return nil
 	}
 
-	provider, ok := ps.Schemas[providerName]
+	provider, ok := ps.Schemas[providerSource]
 
 	if !ok {
-		log.Printf("[WARN] Provider name (%s) not found in provider schema", providerName)
+		provider, ok = ps.Schemas[providerName]
+	}
+
+	if !ok {
+		log.Printf("[WARN] Provider source (%s) and name (%s) not found in provider schema", providerSource, providerName)
 		return nil
 	}
 

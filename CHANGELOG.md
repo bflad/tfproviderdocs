@@ -1,3 +1,9 @@
+# v0.9.0
+
+ENHANCEMENTS
+
+* check: Add `-provider-source` option (support Terraform CLI 0.13 and later `-providers-schema-json` file)
+
 # v0.8.0
 
 ENHANCEMENTS
