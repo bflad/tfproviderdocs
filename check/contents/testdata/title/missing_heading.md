@@ -2,7 +2,7 @@ Manages an Example Thing.
 
 ## Example Usage
 
-```hcl
+```terraform
 resource "example_thing" "example" {
   name = "example"
 }

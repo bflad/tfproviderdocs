@@ -12,7 +12,7 @@ Manages a Test Full.
 
 ## Example Usage
 
-```hcl
+```terraform
 resource "test_full" "example" {
   name = "example"
 }

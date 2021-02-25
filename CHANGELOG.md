@@ -1,5 +1,9 @@
 # v0.9.0
 
+BREAKING CHANGES
+
+* check: Prefer `terraform` code block language over `hcl` in examples with experimental `-enable-contents-check` flag
+
 ENHANCEMENTS
 
 * check: Add `-provider-source` option (support Terraform CLI 0.13 and later `-providers-schema-json` file)

@@ -30,8 +30,8 @@ func (d *Document) checkExampleSection() error {
 	for _, fencedCodeBlock := range section.FencedCodeBlocks {
 		language := markdown.FencedCodeBlockLanguage(fencedCodeBlock, d.source)
 
-		if language != markdown.FencedCodeBlockLanguageHcl && language != markdown.FencedCodeBlockLanguageTerraform {
-			return fmt.Errorf("example section code block language (%s) should be: ```%s or ```%s", language, markdown.FencedCodeBlockLanguageHcl, markdown.FencedCodeBlockLanguageTerraform)
+		if language != markdown.FencedCodeBlockLanguageTerraform {
+			return fmt.Errorf("example section code block language (%s) should be: ```%s", language, markdown.FencedCodeBlockLanguageTerraform)
 		}
 
 		text := markdown.FencedCodeBlockText(fencedCodeBlock, d.source)
