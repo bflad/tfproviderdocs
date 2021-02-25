@@ -28,7 +28,8 @@ type CheckOptions struct {
 	LegacyIndexFile      *LegacyIndexFileOptions
 	LegacyResourceFile   *LegacyResourceFileOptions
 
-	ProviderName string
+	ProviderName   string
+	ProviderSource string
 
 	RegistryDataSourceFile *RegistryDataSourceFileOptions
 	RegistryGuideFile      *RegistryGuideFileOptions
