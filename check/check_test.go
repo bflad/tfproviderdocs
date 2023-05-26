@@ -16,8 +16,16 @@ func TestCheck(t *testing.T) {
 			BasePath: "testdata/valid-registry-directories",
 		},
 		{
+			Name:     "valid registry directories with cdktf docs",
+			BasePath: "testdata/valid-registry-directories-with-cdktf",
+		},
+		{
 			Name:     "valid legacy directories",
 			BasePath: "testdata/valid-legacy-directories",
+		},
+		{
+			Name:     "valid legacy directories with cdktf docs",
+			BasePath: "testdata/valid-legacy-directories-with-cdktf",
 		},
 		{
 			Name:        "valid legacy directories requiring side navigation",
