@@ -30,6 +30,7 @@ builds:
   - linux
   goarch:
   - amd64
+  - arm64
   - 386
   ldflags:
   - -s -w -X github.com/bflad/tfproviderdocs/version.Version={{.Version}} -X github.com/bflad/tfproviderdocs/version.VersionPrerelease=
@@ -52,3 +53,11 @@ milestones:
 signs:
 -
   artifacts: checksum
+  args:
+    - "--batch"
+    - "--local-user"
+    - "{{ .Env.GPG_FINGERPRINT }}"
+    - "--output"
+    - "${signature}"
+    - "--detach-sign"
+    - "${artifact}"
