@@ -11,7 +11,7 @@ import (
 const (
 	CdktfIndexDirectory = `cdktf`
 
-	DocumentationGlobPattern = `{docs/index.md,docs/{data-sources,guides,resources},website/docs}/**/*`
+	DocumentationGlobPattern = `{docs/index.md,docs/{cdktf,data-sources,guides,resources},website/docs}/**/*`
 
 	LegacyIndexDirectory       = `website/docs`
 	LegacyDataSourcesDirectory = `d`
