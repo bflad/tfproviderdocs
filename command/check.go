@@ -29,8 +29,6 @@ type CheckCommandConfig struct {
 	IgnoreFileMismatchResources      string
 	IgnoreFileMissingDataSources     string
 	IgnoreFileMissingResources       string
-	IgnoreSideNavigationDataSources  string
-	IgnoreSideNavigationResources    string
 	LogLevel                         string
 	Path                             string
 	ProviderName                     string
@@ -39,7 +37,6 @@ type CheckCommandConfig struct {
 	RequireGuideSubcategory          bool
 	RequireResourceSubcategory       bool
 	RequireSchemaOrdering            bool
-	RequireSideNavigation            bool
 }
 
 // CheckCommand is a Command implementation
@@ -60,14 +57,11 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-resources", "Comma separated list of resources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-data-sources", "Comma separated list of data sources to ignore missing files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-resources", "Comma separated list of resources to ignore missing files.")
-	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-side-navigation-data-sources", "Comma separated list of data sources to ignore side navigation (legacy terraform.io ERB file) validation.")
-	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-side-navigation-resources", "Comma separated list of resources to ignore side navigation (legacy terraform.io ERB file) validation.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-name", "Terraform Provider short name (e.g. aws). Automatically determined if -provider-source is given or if current working directory or provided path is prefixed with terraform-provider-*.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-source", "Terraform Provider source address (e.g. registry.terraform.io/hashicorp/aws) for Terraform CLI 0.13 and later -providers-schema-json. Automatically sets -provider-name by dropping hostname and namespace prefix.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-providers-schema-json", "Path to terraform providers schema -json file. Enables enhanced validations.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
-	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-side-navigation", "Require side navigation (legacy terraform.io ERB file).")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-schema-ordering", "Require schema attribute lists to be alphabetically ordered (requires -enable-contents-check).")
 	opts.Flush()
 
@@ -101,15 +95,12 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.IgnoreFileMismatchResources, "ignore-file-mismatch-resources", "", "")
 	flags.StringVar(&config.IgnoreFileMissingDataSources, "ignore-file-missing-data-sources", "", "")
 	flags.StringVar(&config.IgnoreFileMissingResources, "ignore-file-missing-resources", "", "")
-	flags.StringVar(&config.IgnoreSideNavigationDataSources, "ignore-side-navigation-data-sources", "", "")
-	flags.StringVar(&config.IgnoreSideNavigationResources, "ignore-side-navigation-resources", "", "")
 	flags.StringVar(&config.ProviderName, "provider-name", "", "")
 	flags.StringVar(&config.ProviderSource, "provider-source", "", "")
 	flags.StringVar(&config.ProvidersSchemaJson, "providers-schema-json", "", "")
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
 	flags.BoolVar(&config.RequireSchemaOrdering, "require-schema-ordering", false, "")
-	flags.BoolVar(&config.RequireSideNavigation, "require-side-navigation", false, "")
 
 	if err := flags.Parse(args); err != nil {
 		flags.Usage()
@@ -210,16 +201,6 @@ func (c *CheckCommand) Run(args []string) int {
 		ignoreFileMissingResources = strings.Split(v, ",")
 	}
 
-	var ignoreSideNavigationDataSources []string
-	if v := config.IgnoreSideNavigationDataSources; v != "" {
-		ignoreSideNavigationDataSources = strings.Split(v, ",")
-	}
-
-	var ignoreSideNavigationResources []string
-	if v := config.IgnoreSideNavigationResources; v != "" {
-		ignoreSideNavigationResources = strings.Split(v, ",")
-	}
-
 	var schemaDataSources, schemaResources map[string]*tfjson.Schema
 	if config.ProvidersSchemaJson != "" {
 		ps, err := providerSchemas(config.ProvidersSchemaJson)
@@ -318,13 +299,6 @@ Check that the current working directory or provided path is prefixed with terra
 			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeResource,
 			Schemas:            schemaResources,
-		},
-		SideNavigation: &check.SideNavigationOptions{
-			FileOptions:       fileOpts,
-			IgnoreDataSources: ignoreSideNavigationDataSources,
-			IgnoreResources:   ignoreSideNavigationResources,
-			Require:           config.RequireSideNavigation,
-			ProviderName:      config.ProviderName,
 		},
 	}
 
