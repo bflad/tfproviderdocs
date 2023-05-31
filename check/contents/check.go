@@ -3,6 +3,7 @@ package contents
 type CheckOptions struct {
 	ArgumentsSection  *CheckArgumentsSectionOptions
 	AttributesSection *CheckAttributesSectionOptions
+	ExamplesSection   *CheckExamplesSectionOptions
 }
 
 func (d *Document) Check(opts *CheckOptions) error {

@@ -35,7 +35,7 @@ func NewContentsCheck(opts *ContentsOptions) *ContentsCheck {
 	return check
 }
 
-func (check *ContentsCheck) Run(path string) error {
+func (check *ContentsCheck) Run(path string, exampleLanguage string) error {
 	if !check.Options.Enable {
 		return nil
 	}
@@ -46,6 +46,9 @@ func (check *ContentsCheck) Run(path string) error {
 		},
 		AttributesSection: &contents.CheckAttributesSectionOptions{
 			RequireSchemaOrdering: check.Options.RequireSchemaOrdering,
+		},
+		ExamplesSection: &contents.CheckExamplesSectionOptions{
+			ExpectedCodeBlockLanguage: exampleLanguage,
 		},
 	}
 

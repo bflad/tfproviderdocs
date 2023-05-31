@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	FileExtensionErb          = `.erb`
 	FileExtensionHtmlMarkdown = `.html.markdown`
 	FileExtensionHtmlMd       = `.html.md`
 	FileExtensionMarkdown     = `.markdown`
