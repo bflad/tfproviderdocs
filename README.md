@@ -85,13 +85,15 @@ For additional information about check flags, you can run `tfproviderdocs check 
 
 This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) for dependency management.
 
+### Go Compatibility
+
+This project follows the [Go support policy](https://golang.org/doc/devel/release.html#policy) for versions. The two latest major releases of Go are supported by the project.
+
+Currently, that means Go **1.19** or later must be used when including this project as a dependency.
+
 ### Updating Dependencies
 
-```console
-$ go get URL
-$ go mod tidy
-$ go mod vendor
-```
+Dependency updates are managed via Dependabot.
 
 ### Unit Testing
 
