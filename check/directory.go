@@ -9,28 +9,50 @@ import (
 )
 
 const (
-	DocumentationGlobPattern = `{docs/index.md,docs/{data-sources,guides,resources},website/docs}/**/*`
+	CdktfIndexDirectory = `cdktf`
+
+	DocumentationGlobPattern = `{docs/index.md,docs/{,cdktf/}{data-sources,guides,resources},website/docs}/**/*`
 
 	LegacyIndexDirectory       = `website/docs`
-	LegacyDataSourcesDirectory = `website/docs/d`
-	LegacyGuidesDirectory      = `website/docs/guides`
-	LegacyResourcesDirectory   = `website/docs/r`
+	LegacyDataSourcesDirectory = `d`
+	LegacyGuidesDirectory      = `guides`
+	LegacyResourcesDirectory   = `r`
 
 	RegistryIndexDirectory       = `docs`
-	RegistryDataSourcesDirectory = `docs/data-sources`
-	RegistryGuidesDirectory      = `docs/guides`
-	RegistryResourcesDirectory   = `docs/resources`
+	RegistryDataSourcesDirectory = `data-sources`
+	RegistryGuidesDirectory      = `guides`
+	RegistryResourcesDirectory   = `resources`
 )
 
 var ValidLegacyDirectories = []string{
 	LegacyIndexDirectory,
+	LegacyIndexDirectory + "/" + LegacyDataSourcesDirectory,
+	LegacyIndexDirectory + "/" + LegacyGuidesDirectory,
+	LegacyIndexDirectory + "/" + LegacyResourcesDirectory,
+}
+
+var ValidRegistryDirectories = []string{
+	RegistryIndexDirectory,
+	RegistryIndexDirectory + "/" + RegistryDataSourcesDirectory,
+	RegistryIndexDirectory + "/" + RegistryGuidesDirectory,
+	RegistryIndexDirectory + "/" + RegistryResourcesDirectory,
+}
+
+var ValidCdktfLanguages = []string{
+	"csharp",
+	"go",
+	"java",
+	"python",
+	"typescript",
+}
+
+var ValidLegacySubdirectories = []string{
 	LegacyDataSourcesDirectory,
 	LegacyGuidesDirectory,
 	LegacyResourcesDirectory,
 }
 
-var ValidRegistryDirectories = []string{
-	RegistryIndexDirectory,
+var ValidRegistrySubdirectories = []string{
 	RegistryDataSourcesDirectory,
 	RegistryGuidesDirectory,
 	RegistryResourcesDirectory,
@@ -43,6 +65,10 @@ func InvalidDirectoriesCheck(directories map[string][]string) error {
 		}
 
 		if IsValidLegacyDirectory(directory) {
+			continue
+		}
+
+		if IsValidCdktfDirectory(directory) {
 			continue
 		}
 
@@ -122,7 +148,7 @@ func GetDirectories(basepath string) (map[string][]string, error) {
 
 	for _, file := range files {
 		// Simple skip of glob matches that are known directories
-		if IsValidRegistryDirectory(file) || IsValidLegacyDirectory(file) {
+		if IsValidRegistryDirectory(file) || IsValidLegacyDirectory(file) || IsValidCdktfDirectory(file) {
 			continue
 		}
 
@@ -155,6 +181,41 @@ func IsValidRegistryDirectory(directory string) bool {
 	for _, validRegistryDirectory := range ValidRegistryDirectories {
 		if directory == validRegistryDirectory {
 			return true
+		}
+	}
+
+	return false
+}
+
+func IsValidCdktfDirectory(directory string) bool {
+	if directory == fmt.Sprintf("%s/%s", LegacyIndexDirectory, CdktfIndexDirectory) {
+		return true
+	}
+
+	if directory == fmt.Sprintf("%s/%s", RegistryIndexDirectory, CdktfIndexDirectory) {
+		return true
+	}
+
+	for _, validCdktfLanguage := range ValidCdktfLanguages {
+
+		if directory == fmt.Sprintf("%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, validCdktfLanguage) {
+			return true
+		}
+
+		if directory == fmt.Sprintf("%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, validCdktfLanguage) {
+			return true
+		}
+
+		for _, validLegacySubdirectory := range ValidLegacySubdirectories {
+			if directory == fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, validCdktfLanguage, validLegacySubdirectory) {
+				return true
+			}
+		}
+
+		for _, validRegistrySubdirectory := range ValidRegistrySubdirectories {
+			if directory == fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, validCdktfLanguage, validRegistrySubdirectory) {
+				return true
+			}
 		}
 	}
 
