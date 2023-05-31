@@ -2,7 +2,7 @@ package contents
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -33,7 +33,7 @@ func NewDocument(path string, providerName string) *Document {
 func (d *Document) Parse() error {
 	var err error
 
-	d.source, err = ioutil.ReadFile(d.path)
+	d.source, err = os.ReadFile(d.path)
 
 	if err != nil {
 		return fmt.Errorf("error reading file (%s): %w", d.path, err)

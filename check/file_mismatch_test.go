@@ -18,8 +18,8 @@ func TestFileHasResource(t *testing.T) {
 			Name: "found",
 			File: "resource1.md",
 			Resources: map[string]*tfjson.Schema{
-				"test_resource1": &tfjson.Schema{},
-				"test_resource2": &tfjson.Schema{},
+				"test_resource1": {},
+				"test_resource2": {},
 			},
 			Expect: true,
 		},
@@ -27,8 +27,8 @@ func TestFileHasResource(t *testing.T) {
 			Name: "not found",
 			File: "resource1.md",
 			Resources: map[string]*tfjson.Schema{
-				"test_resource2": &tfjson.Schema{},
-				"test_resource3": &tfjson.Schema{},
+				"test_resource2": {},
+				"test_resource3": {},
 			},
 			Expect: false,
 		},
@@ -256,8 +256,8 @@ func TestResourceNames(t *testing.T) {
 		{
 			Name: "multiple",
 			Resources: map[string]*tfjson.Schema{
-				"test_resource1": &tfjson.Schema{},
-				"test_resource2": &tfjson.Schema{},
+				"test_resource1": {},
+				"test_resource2": {},
 			},
 			Expect: []string{
 				"test_resource1",

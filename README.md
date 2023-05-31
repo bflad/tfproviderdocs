@@ -10,44 +10,44 @@ Release binaries are available in the [Releases](https://github.com/bflad/tfprov
 
 To instead use Go to install into your `$GOBIN` directory (e.g. `$GOPATH/bin`):
 
-```console
-$ go get github.com/bflad/tfproviderdocs
+```shell
+go install github.com/bflad/tfproviderdocs
 ```
 
 ### Docker Install
 
-```console
-$ docker pull bflad/tfproviderdocs
+```shell
+docker pull bflad/tfproviderdocs
 ```
 
 ### Homebrew Install
 
-```console
-$ brew install bflad/tap/tfproviderdocs
+```shell
+brew install bflad/tap/tfproviderdocs
 ```
 
 ## Usage
 
 Additional information about usage and configuration options can be found by passing the `help` argument:
 
-```console
-$ tfproviderdocs help
+```shell
+tfproviderdocs help
 ```
 
 ### Local Usage
 
 Change into the directory of the Terraform Provider code and run:
 
-```console
-$ tfproviderdocs
+```shell
+tfproviderdocs
 ```
 
 ### Docker Usage
 
 Change into the directory of the Terraform Provider code and run:
 
-```console
-$ docker run -v $(pwd):/src bflad/tfproviderdocs
+```shell
+docker run -v $(pwd):/src bflad/tfproviderdocs
 ```
 
 ## Available Commands
@@ -58,7 +58,6 @@ The `tfproviderdocs check` command verifies the Terraform Provider documentation
 
 - Verifies that no invalid directories are found in the documentation directory structure.
 - Ensures that there is not a mix (legacy and Terraform Registry) of directory structures, which is not supported during Terraform Registry documentation ingress.
-- Verifies side navigation for missing links and mismatched link text (if legacy directory structure).
 - Verifies number of documentation files is below Terraform Registry storage limits.
 - Verifies all known data sources and resources have an associated documentation file (if `-providers-schema-json` is provided)
 - Verifies no extraneous or incorrectly named documentation files exist (if `-providers-schema-json` is provided)
@@ -97,12 +96,12 @@ Dependency updates are managed via Dependabot.
 
 ### Unit Testing
 
-```console
-$ go test ./...
+```shell
+go test ./...
 ```
 
 ### Local Install Testing
 
-```console
-$ go install .
+```shell
+go install .
 ```
