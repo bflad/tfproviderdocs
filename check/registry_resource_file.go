@@ -53,7 +53,7 @@ func NewRegistryResourceFileCheck(opts *RegistryResourceFileOptions) *RegistryRe
 	return check
 }
 
-func (check *RegistryResourceFileCheck) Run(path string) error {
+func (check *RegistryResourceFileCheck) Run(path string, exampleLanguage string) error {
 	fullpath := check.Options.FullPath(path)
 
 	log.Printf("[DEBUG] Checking file: %s", fullpath)
@@ -76,18 +76,18 @@ func (check *RegistryResourceFileCheck) Run(path string) error {
 		return fmt.Errorf("%s: error checking file frontmatter: %w", path, err)
 	}
 
-	if err := NewContentsCheck(check.Options.Contents).Run(fullpath); err != nil {
+	if err := NewContentsCheck(check.Options.Contents).Run(fullpath, exampleLanguage); err != nil {
 		return fmt.Errorf("%s: error checking file contents: %w", path, err)
 	}
 
 	return nil
 }
 
-func (check *RegistryResourceFileCheck) RunAll(files []string) error {
+func (check *RegistryResourceFileCheck) RunAll(files []string, exampleLanguage string) error {
 	var result *multierror.Error
 
 	for _, file := range files {
-		if err := check.Run(file); err != nil {
+		if err := check.Run(file, exampleLanguage); err != nil {
 			result = multierror.Append(result, err)
 		}
 	}
