@@ -11,7 +11,7 @@ require (
 	github.com/mitchellh/cli v1.1.5
 	github.com/yuin/goldmark v1.5.4
 	github.com/yuin/goldmark-meta v0.0.0-20191126180153-f0638e958b60
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
