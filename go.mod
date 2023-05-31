@@ -3,7 +3,7 @@ module github.com/bflad/tfproviderdocs
 go 1.19
 
 require (
-	github.com/bmatcuk/doublestar v1.2.1
+	github.com/bmatcuk/doublestar v1.3.4
 	github.com/hashicorp/go-hclog v0.10.0
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/hashicorp/terraform-json v0.16.0
