@@ -1,6 +1,6 @@
 module github.com/bflad/tfproviderdocs
 
-go 1.13
+go 1.14
 
 require (
 	github.com/bmatcuk/doublestar v1.2.1
