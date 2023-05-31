@@ -37,8 +37,6 @@ type CheckOptions struct {
 	RegistryResourceFile   *RegistryResourceFileOptions
 
 	ResourceFileMismatch *FileMismatchOptions
-
-	SideNavigation *SideNavigationOptions
 }
 
 func NewCheck(opts *CheckOptions) *Check {
@@ -131,16 +129,6 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if err := NewLegacyResourceFileCheck(check.Options.LegacyResourceFile).RunAll(legacyResourcesFiles); err != nil {
-			result = multierror.Append(result, err)
-		}
-	}
-
-	if legacyDataSourcesOk || legacyResourcesOk {
-		if err := SideNavigationLinkCheck(check.Options.SideNavigation); err != nil {
-			result = multierror.Append(result, err)
-		}
-
-		if err := SideNavigationMismatchCheck(check.Options.SideNavigation, legacyDataSourcesFiles, legacyResourcesFiles); err != nil {
 			result = multierror.Append(result, err)
 		}
 	}

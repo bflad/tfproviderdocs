@@ -28,16 +28,6 @@ func TestCheck(t *testing.T) {
 			BasePath: "testdata/valid-legacy-directories-with-cdktf",
 		},
 		{
-			Name:        "valid legacy directories requiring side navigation",
-			BasePath:    "testdata/valid-legacy-directories",
-			ExpectError: true,
-			Options: &CheckOptions{
-				SideNavigation: &SideNavigationOptions{
-					Require: true,
-				},
-			},
-		},
-		{
 			Name:     "valid mixed directories",
 			BasePath: "testdata/valid-mixed-directories",
 		},
@@ -158,18 +148,6 @@ func TestCheck(t *testing.T) {
 
 			if testCase.Options.ResourceFileMismatch.ProviderName == "" {
 				testCase.Options.ResourceFileMismatch.ProviderName = "test"
-			}
-
-			if testCase.Options.SideNavigation == nil {
-				testCase.Options.SideNavigation = &SideNavigationOptions{}
-			}
-
-			if testCase.Options.SideNavigation.FileOptions == nil {
-				testCase.Options.SideNavigation.FileOptions = fileOpts
-			}
-
-			if testCase.Options.SideNavigation.ProviderName == "" {
-				testCase.Options.SideNavigation.ProviderName = "test"
 			}
 
 			directories, err := GetDirectories(testCase.BasePath)
