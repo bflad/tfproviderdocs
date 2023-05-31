@@ -1,7 +1,6 @@
 package check
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -30,7 +29,7 @@ func TestFileSizeCheck(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.Name, func(t *testing.T) {
-			file, err := ioutil.TempFile(os.TempDir(), "TestFileSizeCheck")
+			file, err := os.CreateTemp(os.TempDir(), "TestFileSizeCheck")
 
 			if err != nil {
 				t.Fatalf("error creating temporary file: %s", err)

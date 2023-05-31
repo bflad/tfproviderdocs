@@ -1,3 +1,18 @@
+# v0.10.0
+
+NOTES
+
+* all: This Go module and the associated Docker image has been updated to Go 1.19 per the [Go support policy](https://go.dev/doc/devel/release#policy). Any consumers building on earlier Go versions or dependent on earlier Go version functionality may experience errors. (#55)
+
+BREAKING CHANGES
+
+* check: The `ignore-side-navigation-data-sources`, `ignore-side-navigation-resources`, and `require-side-navigation` flags have been removed without replacement. Side navigation functionality has not been necessary for provider documentation since the introduction of the Terraform Registry. (#52)
+
+FEATURES
+
+* all: Released binaries now include `darwin/arm64`, `linux/arm64`, and `windows/arm64` (#54)
+* check: Support CDKTF directory structure (#50)
+
 # v0.9.1
 
 BUG FIXES

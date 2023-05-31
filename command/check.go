@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -362,7 +361,7 @@ func providerNameFromPath(path string) string {
 func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
 	log.Printf("[DEBUG] Loading providers schema JSON file: %s", path)
 
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 
 	if err != nil {
 		return nil, fmt.Errorf("error reading providers schema JSON file (%s): %w", path, err)

@@ -11,7 +11,6 @@ require (
 	github.com/mitchellh/cli v1.0.0
 	github.com/yuin/goldmark v1.2.1
 	github.com/yuin/goldmark-meta v0.0.0-20191126180153-f0638e958b60
-	golang.org/x/net v0.0.0-20180811021610-c39426892332
 	gopkg.in/yaml.v2 v2.2.7
 )
 

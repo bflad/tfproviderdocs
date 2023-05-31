@@ -2,8 +2,8 @@ package check
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/hashicorp/go-multierror"
 )
@@ -58,7 +58,7 @@ func (check *LegacyGuideFileCheck) Run(path string) error {
 		return fmt.Errorf("%s: error checking file size: %w", path, err)
 	}
 
-	content, err := ioutil.ReadFile(fullpath)
+	content, err := os.ReadFile(fullpath)
 
 	if err != nil {
 		return fmt.Errorf("%s: error reading file: %w", path, err)
