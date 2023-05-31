@@ -1,6 +1,6 @@
 module github.com/bflad/tfproviderdocs
 
-go 1.14
+go 1.19
 
 require (
 	github.com/bmatcuk/doublestar v1.2.1
@@ -13,4 +13,16 @@ require (
 	github.com/yuin/goldmark-meta v0.0.0-20191126180153-f0638e958b60
 	golang.org/x/net v0.0.0-20180811021610-c39426892332
 	gopkg.in/yaml.v2 v2.2.7
+)
+
+require (
+	github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310 // indirect
+	github.com/bgentry/speakeasy v0.1.0 // indirect
+	github.com/fatih/color v1.7.0 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/mattn/go-isatty v0.0.10 // indirect
+	github.com/posener/complete v1.1.1 // indirect
+	github.com/zclconf/go-cty v1.2.1 // indirect
+	golang.org/x/sys v0.0.0-20191008105621-543471e840be // indirect
+	golang.org/x/text v0.3.0 // indirect
 )
