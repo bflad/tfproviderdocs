@@ -24,6 +24,7 @@ type CheckCommandConfig struct {
 	AllowedResourceSubcategories     string
 	AllowedResourceSubcategoriesFile string
 	EnableContentsCheck              bool
+	EnableCdktfCheck                 bool
 	IgnoreFileMismatchDataSources    string
 	IgnoreFileMismatchResources      string
 	IgnoreFileMissingDataSources     string
@@ -52,6 +53,7 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-resource-subcategories", "Comma separated list of allowed data source and resource frontmatter subcategories.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-allowed-resource-subcategories-file", "Path to newline separated file of allowed data source and resource frontmatter subcategories.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-enable-contents-check", "(Experimental) Enable contents checking.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-enable-cdktf-check", "Enable checking for CDK for Terraform docs.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-data-sources", "Comma separated list of data sources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-resources", "Comma separated list of resources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-data-sources", "Comma separated list of data sources to ignore missing files.")
@@ -90,6 +92,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.AllowedResourceSubcategories, "allowed-resource-subcategories", "", "")
 	flags.StringVar(&config.AllowedResourceSubcategoriesFile, "allowed-resource-subcategories-file", "", "")
 	flags.BoolVar(&config.EnableContentsCheck, "enable-contents-check", false, "")
+	flags.BoolVar(&config.EnableCdktfCheck, "enable-cdktf-check", false, "")
 	flags.StringVar(&config.IgnoreFileMismatchDataSources, "ignore-file-mismatch-data-sources", "", "")
 	flags.StringVar(&config.IgnoreFileMismatchResources, "ignore-file-mismatch-resources", "", "")
 	flags.StringVar(&config.IgnoreFileMissingDataSources, "ignore-file-missing-data-sources", "", "")
@@ -299,6 +302,7 @@ Check that the current working directory or provided path is prefixed with terra
 			ResourceType:       check.ResourceTypeResource,
 			Schemas:            schemaResources,
 		},
+		EnableCdktfCheck: config.EnableCdktfCheck,
 	}
 
 	if err := check.NewCheck(checkOpts).Run(directories); err != nil {
