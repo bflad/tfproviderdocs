@@ -40,7 +40,7 @@ type CheckOptions struct {
 
 	ResourceFileMismatch *FileMismatchOptions
 
-	EnableCdktfCheck bool
+	IgnoreCdktfMissingFiles bool
 }
 
 func NewCheck(opts *CheckOptions) *Check {
@@ -104,7 +104,7 @@ func (check *Check) Run(directories map[string][]string) error {
 
 	for _, cdktfLanguage := range ValidCdktfLanguages {
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryDataSourcesDirectory)]; ok {
-			if check.Options.EnableCdktfCheck {
+			if !check.Options.IgnoreCdktfMissingFiles {
 				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
@@ -116,7 +116,7 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryResourcesDirectory)]; ok {
-			if check.Options.EnableCdktfCheck {
+			if !check.Options.IgnoreCdktfMissingFiles {
 				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
@@ -165,7 +165,7 @@ func (check *Check) Run(directories map[string][]string) error {
 
 	for _, cdktfLanguage := range ValidCdktfLanguages {
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyDataSourcesDirectory)]; ok {
-			if check.Options.EnableCdktfCheck {
+			if !check.Options.IgnoreCdktfMissingFiles {
 				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
@@ -177,7 +177,7 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyResourcesDirectory)]; ok {
-			if check.Options.EnableCdktfCheck {
+			if !check.Options.IgnoreCdktfMissingFiles {
 				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
