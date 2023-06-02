@@ -39,6 +39,8 @@ type CheckOptions struct {
 	RegistryResourceFile   *RegistryResourceFileOptions
 
 	ResourceFileMismatch *FileMismatchOptions
+
+	IgnoreCdktfMissingFiles bool
 }
 
 func NewCheck(opts *CheckOptions) *Check {
@@ -102,8 +104,10 @@ func (check *Check) Run(directories map[string][]string) error {
 
 	for _, cdktfLanguage := range ValidCdktfLanguages {
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryDataSourcesDirectory)]; ok {
-			if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
-				result = multierror.Append(result, err)
+			if !check.Options.IgnoreCdktfMissingFiles {
+				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
+					result = multierror.Append(result, err)
+				}
 			}
 
 			if err := NewRegistryDataSourceFileCheck(check.Options.RegistryDataSourceFile).RunAll(files); err != nil {
@@ -112,8 +116,10 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryResourcesDirectory)]; ok {
-			if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
-				result = multierror.Append(result, err)
+			if !check.Options.IgnoreCdktfMissingFiles {
+				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
+					result = multierror.Append(result, err)
+				}
 			}
 
 			if err := NewRegistryResourceFileCheck(check.Options.RegistryResourceFile).RunAll(files, cdktfLanguage); err != nil {
@@ -159,8 +165,10 @@ func (check *Check) Run(directories map[string][]string) error {
 
 	for _, cdktfLanguage := range ValidCdktfLanguages {
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyDataSourcesDirectory)]; ok {
-			if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
-				result = multierror.Append(result, err)
+			if !check.Options.IgnoreCdktfMissingFiles {
+				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
+					result = multierror.Append(result, err)
+				}
 			}
 
 			if err := NewLegacyDataSourceFileCheck(check.Options.LegacyDataSourceFile).RunAll(files); err != nil {
@@ -169,8 +177,10 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyResourcesDirectory)]; ok {
-			if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
-				result = multierror.Append(result, err)
+			if !check.Options.IgnoreCdktfMissingFiles {
+				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
+					result = multierror.Append(result, err)
+				}
 			}
 
 			if err := NewLegacyResourceFileCheck(check.Options.LegacyResourceFile).RunAll(files, cdktfLanguage); err != nil {
