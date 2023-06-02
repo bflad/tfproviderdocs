@@ -1,3 +1,9 @@
+# v0.11.0
+
+ENHANCEMENTS
+
+* check: Add `ignore-cdktf-missing-files` flag for providers wishing to iteratively introduce CDKTF documentation
+
 # v0.10.0
 
 NOTES
