@@ -102,26 +102,28 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 	}
 
-	if check.Options.EnableCdktfCheck {
-		for _, cdktfLanguage := range ValidCdktfLanguages {
-			if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryDataSourcesDirectory)]; ok {
+	for _, cdktfLanguage := range ValidCdktfLanguages {
+		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryDataSourcesDirectory)]; ok {
+			if check.Options.EnableCdktfCheck {
 				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
-					result = multierror.Append(result, err)
-				}
-
-				if err := NewRegistryDataSourceFileCheck(check.Options.RegistryDataSourceFile).RunAll(files); err != nil {
 					result = multierror.Append(result, err)
 				}
 			}
 
-			if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryResourcesDirectory)]; ok {
+			if err := NewRegistryDataSourceFileCheck(check.Options.RegistryDataSourceFile).RunAll(files); err != nil {
+				result = multierror.Append(result, err)
+			}
+		}
+
+		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", RegistryIndexDirectory, CdktfIndexDirectory, cdktfLanguage, RegistryResourcesDirectory)]; ok {
+			if check.Options.EnableCdktfCheck {
 				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
+			}
 
-				if err := NewRegistryResourceFileCheck(check.Options.RegistryResourceFile).RunAll(files, cdktfLanguage); err != nil {
-					result = multierror.Append(result, err)
-				}
+			if err := NewRegistryResourceFileCheck(check.Options.RegistryResourceFile).RunAll(files, cdktfLanguage); err != nil {
+				result = multierror.Append(result, err)
 			}
 		}
 	}
@@ -161,26 +163,28 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 	}
 
-	if check.Options.EnableCdktfCheck {
-		for _, cdktfLanguage := range ValidCdktfLanguages {
-			if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyDataSourcesDirectory)]; ok {
+	for _, cdktfLanguage := range ValidCdktfLanguages {
+		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyDataSourcesDirectory)]; ok {
+			if check.Options.EnableCdktfCheck {
 				if err := NewFileMismatchCheck(check.Options.DataSourceFileMismatch).Run(files); err != nil {
-					result = multierror.Append(result, err)
-				}
-
-				if err := NewLegacyDataSourceFileCheck(check.Options.LegacyDataSourceFile).RunAll(files); err != nil {
 					result = multierror.Append(result, err)
 				}
 			}
 
-			if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyResourcesDirectory)]; ok {
+			if err := NewLegacyDataSourceFileCheck(check.Options.LegacyDataSourceFile).RunAll(files); err != nil {
+				result = multierror.Append(result, err)
+			}
+		}
+
+		if files, ok := directories[fmt.Sprintf("%s/%s/%s/%s", LegacyIndexDirectory, CdktfIndexDirectory, cdktfLanguage, LegacyResourcesDirectory)]; ok {
+			if check.Options.EnableCdktfCheck {
 				if err := NewFileMismatchCheck(check.Options.ResourceFileMismatch).Run(files); err != nil {
 					result = multierror.Append(result, err)
 				}
+			}
 
-				if err := NewLegacyResourceFileCheck(check.Options.LegacyResourceFile).RunAll(files, cdktfLanguage); err != nil {
-					result = multierror.Append(result, err)
-				}
+			if err := NewLegacyResourceFileCheck(check.Options.LegacyResourceFile).RunAll(files, cdktfLanguage); err != nil {
+				result = multierror.Append(result, err)
 			}
 		}
 	}
