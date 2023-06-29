@@ -6,18 +6,18 @@ A documentation tool for [Terraform Provider](https://www.terraform.io/docs/prov
 
 ### Local Install
 
-Release binaries are available in the [Releases](https://github.com/bflad/tfproviderdocs/releases) section.
+Release binaries are available in the [Releases](https://github.com/YakDriver/tfproviderdocs/releases) section.
 
 To instead use Go to install into your `$GOBIN` directory (e.g. `$GOPATH/bin`):
 
 ```shell
-go install github.com/bflad/tfproviderdocs
+go install github.com/YakDriver/tfproviderdocs
 ```
 
 ### Docker Install
 
 ```shell
-docker pull bflad/tfproviderdocs
+docker pull YakDriver/tfproviderdocs
 ```
 
 ### Homebrew Install
@@ -47,7 +47,7 @@ tfproviderdocs
 Change into the directory of the Terraform Provider code and run:
 
 ```shell
-docker run -v $(pwd):/src bflad/tfproviderdocs
+docker run -v $(pwd):/src YakDriver/tfproviderdocs
 ```
 
 ## Available Commands

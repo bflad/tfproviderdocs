@@ -1,4 +1,4 @@
-module github.com/bflad/tfproviderdocs
+module github.com/YakDriver/tfproviderdocs
 
 go 1.19
 

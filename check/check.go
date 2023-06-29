@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/bflad/tfproviderdocs/markdown"
+	"github.com/YakDriver/tfproviderdocs/markdown"
 	"github.com/hashicorp/go-multierror"
 )
 

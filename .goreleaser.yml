@@ -15,7 +15,7 @@ brews:
   tap:
     owner: bflad
     name: homebrew-tap
-  homepage: https://github.com/bflad/tfproviderdocs
+  homepage: https://github.com/YakDriver/tfproviderdocs
   install: |
     bin.install "tfproviderdocs"
   test: |
@@ -33,7 +33,7 @@ builds:
   - arm64
   - 386
   ldflags:
-  - -s -w -X github.com/bflad/tfproviderdocs/version.Version={{.Version}} -X github.com/bflad/tfproviderdocs/version.VersionPrerelease=
+  - -s -w -X github.com/YakDriver/tfproviderdocs/version.Version={{.Version}} -X github.com/YakDriver/tfproviderdocs/version.VersionPrerelease=
   main: .
 changelog:
   skip: true
@@ -44,9 +44,9 @@ dockers:
   - "--label=org.label-schema.version={{.Version}}"
   - "--label=org.label-schema.name={{.ProjectName}}"
   image_templates:
-  - 'bflad/tfproviderdocs:{{ .Version }}'
-  - 'bflad/tfproviderdocs:{{ .Major }}.{{ .Minor }}'
-  - 'bflad/tfproviderdocs:latest'
+  - 'YakDriver/tfproviderdocs:{{ .Version }}'
+  - 'YakDriver/tfproviderdocs:{{ .Major }}.{{ .Minor }}'
+  - 'YakDriver/tfproviderdocs:latest'
 milestones:
 -
   close: true

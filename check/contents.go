@@ -3,7 +3,7 @@ package check
 import (
 	"fmt"
 
-	"github.com/bflad/tfproviderdocs/check/contents"
+	"github.com/YakDriver/tfproviderdocs/check/contents"
 )
 
 type ContentsCheck struct {

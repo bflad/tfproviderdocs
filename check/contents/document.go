@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/bflad/tfproviderdocs/markdown"
+	"github.com/YakDriver/tfproviderdocs/markdown"
 	"github.com/yuin/goldmark/ast"
 )
 
