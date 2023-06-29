@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bflad/tfproviderdocs/command"
-	"github.com/bflad/tfproviderdocs/version"
+	"github.com/YakDriver/tfproviderdocs/command"
+	"github.com/YakDriver/tfproviderdocs/version"
 	"github.com/mattn/go-colorable"
 	"github.com/mitchellh/cli"
 )

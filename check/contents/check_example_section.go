@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bflad/tfproviderdocs/markdown"
+	"github.com/YakDriver/tfproviderdocs/markdown"
 )
 
 type CheckExamplesSectionOptions struct {

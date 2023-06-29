@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bflad/tfproviderdocs/markdown"
+	"github.com/YakDriver/tfproviderdocs/markdown"
 )
 
 func (d *Document) checkImportSection() error {

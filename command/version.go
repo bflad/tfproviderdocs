@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/bflad/tfproviderdocs/version"
+	"github.com/YakDriver/tfproviderdocs/version"
 	"github.com/mitchellh/cli"
 )
 

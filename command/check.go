@@ -13,7 +13,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/bflad/tfproviderdocs/check"
+	"github.com/YakDriver/tfproviderdocs/check"
 	tfjson "github.com/hashicorp/terraform-json"
 	"github.com/mitchellh/cli"
 )
