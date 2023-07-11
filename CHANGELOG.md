@@ -1,3 +1,9 @@
+# v0.11.1
+
+BUG FIXES
+
+check: Only count HCL files (ignoring CDKTF files) for maximum file limit as the limit is per-language (#78)
+
 # v0.11.0
 
 ENHANCEMENTS
