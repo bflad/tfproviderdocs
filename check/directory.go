@@ -112,6 +112,11 @@ func NumberOfFilesCheck(directories map[string][]string) error {
 	var numberOfFiles int
 
 	for directory, files := range directories {
+		// Ignore CDKTF files. The file limit is per-language and presumably there is one CDKTF file per source HCL file.
+		if IsValidCdktfDirectory(directory) {
+			continue
+		}
+
 		directoryNumberOfFiles := len(files)
 		log.Printf("[TRACE] Found %d documentation files in directory: %s", directoryNumberOfFiles, directory)
 		numberOfFiles = numberOfFiles + directoryNumberOfFiles
