@@ -112,6 +112,11 @@ func NumberOfFilesCheck(directories map[string][]string) error {
 	var numberOfFiles int
 
 	for directory, files := range directories {
+		// Ignore CDKTF files, they are not shown in the Terraform Registry Side-Bar and therefore do not count against the limit
+		if IsValidCdktfDirectory(directory) {
+			continue
+		}
+
 		directoryNumberOfFiles := len(files)
 		log.Printf("[TRACE] Found %d documentation files in directory: %s", directoryNumberOfFiles, directory)
 		numberOfFiles = numberOfFiles + directoryNumberOfFiles
