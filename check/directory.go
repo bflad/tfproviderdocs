@@ -112,7 +112,7 @@ func NumberOfFilesCheck(directories map[string][]string) error {
 	var numberOfFiles int
 
 	for directory, files := range directories {
-		// Ignore CDKTF files, they are not shown in the Terraform Registry Side-Bar and therefore do not count against the limit
+		// Ignore CDKTF files. The file limit is per-language and presumably there is one CDKTF file per source HCL file.
 		if IsValidCdktfDirectory(directory) {
 			continue
 		}
