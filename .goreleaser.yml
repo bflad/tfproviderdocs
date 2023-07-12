@@ -12,8 +12,8 @@ brews:
   - go
   description: Terraform Provider Documentation Tool
   folder: Formula
-  tap:
-    owner: bflad
+  repository:
+    owner: YakDriver
     name: homebrew-tap
   homepage: https://github.com/YakDriver/tfproviderdocs
   install: |

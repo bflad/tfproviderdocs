@@ -23,7 +23,7 @@ docker pull YakDriver/tfproviderdocs
 ### Homebrew Install
 
 ```shell
-brew install bflad/tap/tfproviderdocs
+brew install YakDriver/tap/tfproviderdocs
 ```
 
 ## Usage
