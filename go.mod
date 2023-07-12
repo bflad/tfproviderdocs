@@ -6,7 +6,7 @@ require (
 	github.com/bmatcuk/doublestar v1.3.4
 	github.com/hashicorp/go-hclog v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/terraform-json v0.16.0
+	github.com/hashicorp/terraform-json v0.17.1
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mitchellh/cli v1.1.5
 	github.com/yuin/goldmark v1.5.4
@@ -33,7 +33,7 @@ require (
 	github.com/posener/complete v1.1.1 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
-	github.com/zclconf/go-cty v1.13.0 // indirect
+	github.com/zclconf/go-cty v1.13.2 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
 	golang.org/x/text v0.3.8 // indirect
