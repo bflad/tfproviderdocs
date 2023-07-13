@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/hashicorp/go-multierror"
 )
@@ -76,10 +77,12 @@ func (check *RegistryResourceFileCheck) Run(path string, exampleLanguage string)
 		return fmt.Errorf("%s: error checking file frontmatter: %w", path, err)
 	}
 
-	if err := NewContentsCheck(check.Options.Contents).Run(fullpath, exampleLanguage); err != nil {
-		return fmt.Errorf("%s: error checking file contents: %w", path, err)
+	// We don't want to check the content for CDKTF files since they are converted
+	if !IsValidCdktfDirectory(filepath.Dir(fullpath)) {
+		if err := NewContentsCheck(check.Options.Contents).Run(fullpath, exampleLanguage); err != nil {
+			return fmt.Errorf("%s: error checking file contents: %w", path, err)
+		}
 	}
-
 	return nil
 }
 
