@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/hashicorp/go-multierror"
 )
@@ -58,6 +59,11 @@ func NewLegacyResourceFileCheck(opts *LegacyResourceFileOptions) *LegacyResource
 func (check *LegacyResourceFileCheck) Run(path string, exampleLanguage string) error {
 	fullpath := check.Options.FullPath(path)
 
+	// skip cdktf directories
+	if IsValidCdktfDirectory(path) {
+		return nil
+	}
+
 	log.Printf("[DEBUG] Checking file: %s", fullpath)
 
 	if err := LegacyFileExtensionCheck(path); err != nil {
@@ -78,10 +84,12 @@ func (check *LegacyResourceFileCheck) Run(path string, exampleLanguage string) e
 		return fmt.Errorf("%s: error checking file frontmatter: %w", path, err)
 	}
 
-	if err := NewContentsCheck(check.Options.Contents).Run(fullpath, exampleLanguage); err != nil {
-		return fmt.Errorf("%s: error checking file contents: %w", path, err)
+	// We don't want to check the content for CDKTF files since they are converted
+	if !IsValidCdktfDirectory(filepath.Dir(fullpath)) {
+		if err := NewContentsCheck(check.Options.Contents).Run(fullpath, exampleLanguage); err != nil {
+			return fmt.Errorf("%s: error checking file contents: %w", path, err)
+		}
 	}
-
 	return nil
 }
 
