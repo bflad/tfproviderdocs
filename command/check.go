@@ -123,6 +123,11 @@ func (c *CheckCommand) Run(args []string) int {
 
 	ConfigureLogging(c.Name(), config.LogLevel)
 
+	if config.RequireLayout && config.WarnDeprecatedFeatures {
+		c.Ui.Error("Using flags `-warn-deprecated-features` and `-require-layout` together will result in conflicting advice to both remove and add layout fields. Please use only one at a time.")
+		return 1
+	}
+
 	if config.ProviderName == "" && config.ProviderSource != "" {
 		providerSourceParts := strings.Split(config.ProviderSource, "/")
 		config.ProviderName = providerSourceParts[len(providerSourceParts)-1]
