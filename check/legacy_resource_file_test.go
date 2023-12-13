@@ -20,6 +20,12 @@ func TestLegacyResourceFileCheck(t *testing.T) {
 			ExampleLanguage: "terraform",
 		},
 		{
+			Name:            "valid frontmatter without layout",
+			BasePath:        "testdata/valid-legacy-files",
+			Path:            "resource_without_layout.html.markdown",
+			ExampleLanguage: "terraform",
+		},
+		{
 			Name:            "invalid extension",
 			BasePath:        "testdata/invalid-legacy-files",
 			Path:            "resource_invalid_extension.txt",
@@ -37,13 +43,6 @@ func TestLegacyResourceFileCheck(t *testing.T) {
 			Name:            "invalid frontmatter with sidebar_current",
 			BasePath:        "testdata/invalid-legacy-files",
 			Path:            "resource_with_sidebar_current.html.markdown",
-			ExampleLanguage: "terraform",
-			ExpectError:     true,
-		},
-		{
-			Name:            "invalid frontmatter without layout",
-			BasePath:        "testdata/invalid-legacy-files",
-			Path:            "resource_without_layout.html.markdown",
 			ExampleLanguage: "terraform",
 			ExpectError:     true,
 		},

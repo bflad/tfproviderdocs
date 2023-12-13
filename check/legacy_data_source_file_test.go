@@ -18,6 +18,11 @@ func TestLegacyDataSourceFileCheck(t *testing.T) {
 			Path:     "data_source.html.markdown",
 		},
 		{
+			Name:     "valid frontmatter without layout",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "data_source_without_layout.html.markdown",
+		},
+		{
 			Name:        "invalid extension",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "data_source_invalid_extension.txt",
@@ -33,12 +38,6 @@ func TestLegacyDataSourceFileCheck(t *testing.T) {
 			Name:        "invalid frontmatter with sidebar_current",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "data_source_with_sidebar_current.html.markdown",
-			ExpectError: true,
-		},
-		{
-			Name:        "invalid frontmatter without layout",
-			BasePath:    "testdata/invalid-legacy-files",
-			Path:        "data_source_without_layout.html.markdown",
 			ExpectError: true,
 		},
 	}

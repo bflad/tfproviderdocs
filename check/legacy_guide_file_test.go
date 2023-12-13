@@ -23,6 +23,11 @@ func TestLegacyGuideFileCheck(t *testing.T) {
 			Path:     "2.0-guide.html.markdown",
 		},
 		{
+			Name:     "valid frontmatter without layout",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "guide_without_layout.html.markdown",
+		},
+		{
 			Name:        "invalid extension",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "guide_invalid_extension.txt",
@@ -38,12 +43,6 @@ func TestLegacyGuideFileCheck(t *testing.T) {
 			Name:        "invalid frontmatter with sidebar_current",
 			BasePath:    "testdata/invalid-legacy-files",
 			Path:        "guide_with_sidebar_current.html.markdown",
-			ExpectError: true,
-		},
-		{
-			Name:        "invalid frontmatter without layout",
-			BasePath:    "testdata/invalid-legacy-files",
-			Path:        "guide_without_layout.html.markdown",
 			ExpectError: true,
 		},
 	}
