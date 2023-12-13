@@ -197,6 +197,20 @@ page_title: Example Page Title
 			},
 			ExpectError: true,
 		},
+		{
+			Name: "warn about deprecated layout frontmatter in valid file (-warn-deprecated-features flag)",
+			Source: `
+description: |-
+  Example description
+layout: "example"
+page_title: Example Page Title
+subcategory: Example Subcategory
+`,
+			Options: &FrontMatterOptions{
+				WarnDeprecatedFeatures: true,
+			},
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {
