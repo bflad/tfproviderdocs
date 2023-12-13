@@ -35,6 +35,7 @@ type CheckCommandConfig struct {
 	ProviderSource                   string
 	ProvidersSchemaJson              string
 	RequireGuideSubcategory          bool
+	RequireLayout                    bool
 	RequireResourceSubcategory       bool
 	RequireSchemaOrdering            bool
 	WarnDeprecatedFeatures           bool
@@ -63,6 +64,7 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-source", "Terraform Provider source address (e.g. registry.terraform.io/hashicorp/aws) for Terraform CLI 0.13 and later -providers-schema-json. Automatically sets -provider-name by dropping hostname and namespace prefix.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-providers-schema-json", "Path to terraform providers schema -json file. Enables enhanced validations.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-layout", "Require legacy index, guide, data source, and resource frontmatter to include layout.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-schema-ordering", "Require schema attribute lists to be alphabetically ordered (requires -enable-contents-check).")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-warn-deprecated-features", "Warn about deprecated frontmatter and files that can be removed.")
@@ -103,6 +105,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.StringVar(&config.ProviderSource, "provider-source", "", "")
 	flags.StringVar(&config.ProvidersSchemaJson, "providers-schema-json", "", "")
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
+	flags.BoolVar(&config.RequireLayout, "require-layout", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
 	flags.BoolVar(&config.RequireSchemaOrdering, "require-schema-ordering", false, "")
 	flags.BoolVar(&config.WarnDeprecatedFeatures, "warn-deprecated-features", false, "")
@@ -242,6 +245,7 @@ Check that the current working directory or provided path is prefixed with terra
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
 				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireLayout:          config.RequireLayout,
 				RequireSubcategory:     config.RequireResourceSubcategory,
 				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
@@ -250,12 +254,16 @@ Check that the current working directory or provided path is prefixed with terra
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
 				AllowedSubcategories:   allowedGuideSubcategories,
+				RequireLayout:          config.RequireLayout,
 				RequireSubcategory:     config.RequireGuideSubcategory,
 				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 		},
 		LegacyIndexFile: &check.LegacyIndexFileOptions{
 			FileOptions: fileOpts,
+			FrontMatter: &check.FrontMatterOptions{
+				RequireLayout: config.RequireLayout,
+			},
 		},
 		LegacyResourceFile: &check.LegacyResourceFileOptions{
 			Contents: &check.ContentsOptions{
@@ -265,6 +273,7 @@ Check that the current working directory or provided path is prefixed with terra
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
 				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireLayout:          config.RequireLayout,
 				RequireSubcategory:     config.RequireResourceSubcategory,
 				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},

@@ -40,12 +40,7 @@ func NewLegacyIndexFileCheck(opts *LegacyIndexFileOptions) *LegacyIndexFileCheck
 	check.Options.FrontMatter.NoSidebarCurrent = true
 	check.Options.FrontMatter.NoSubcategory = true
 	check.Options.FrontMatter.RequireDescription = true
-	check.Options.FrontMatter.RequireLayout = true
 	check.Options.FrontMatter.RequirePageTitle = true
-
-	if check.Options.FrontMatter.WarnDeprecatedFeatures {
-		check.Options.FrontMatter.RequireLayout = false
-	}
 
 	return check
 }
