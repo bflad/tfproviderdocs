@@ -42,6 +42,10 @@ func NewLegacyDataSourceFileCheck(opts *LegacyDataSourceFileOptions) *LegacyData
 	check.Options.FrontMatter.RequireLayout = true
 	check.Options.FrontMatter.RequirePageTitle = true
 
+	if check.Options.FrontMatter.WarnDeprecatedFeatures {
+		check.Options.FrontMatter.RequireLayout = false
+	}
+
 	return check
 }
 

@@ -21,16 +21,17 @@ type FrontMatterData struct {
 
 // FrontMatterOptions represents configuration options for FrontMatter.
 type FrontMatterOptions struct {
-	AllowedSubcategories []string
-	NoDescription        bool
-	NoLayout             bool
-	NoPageTitle          bool
-	NoSidebarCurrent     bool
-	NoSubcategory        bool
-	RequireDescription   bool
-	RequireLayout        bool
-	RequirePageTitle     bool
-	RequireSubcategory   bool
+	AllowedSubcategories   []string
+	NoDescription          bool
+	NoLayout               bool
+	NoPageTitle            bool
+	NoSidebarCurrent       bool
+	NoSubcategory          bool
+	RequireDescription     bool
+	RequireLayout          bool
+	RequirePageTitle       bool
+	RequireSubcategory     bool
+	WarnDeprecatedFeatures bool
 }
 
 func NewFrontMatterCheck(opts *FrontMatterOptions) *FrontMatterCheck {
@@ -79,6 +80,10 @@ func (check *FrontMatterCheck) Run(src []byte) error {
 
 	if check.Options.RequireLayout && frontMatter.Layout == nil {
 		return fmt.Errorf("YAML frontmatter missing required layout")
+	}
+
+	if check.Options.WarnDeprecatedFeatures && frontMatter.Layout != nil {
+		return fmt.Errorf("YAML frontmatter contains deprecated layout- this can be removed")
 	}
 
 	if check.Options.RequirePageTitle && frontMatter.PageTitle == nil {

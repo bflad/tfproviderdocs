@@ -37,6 +37,7 @@ type CheckCommandConfig struct {
 	RequireGuideSubcategory          bool
 	RequireResourceSubcategory       bool
 	RequireSchemaOrdering            bool
+	WarnDeprecatedFeatures           bool
 }
 
 // CheckCommand is a Command implementation
@@ -64,6 +65,7 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-guide-subcategory", "Require guide frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-resource-subcategory", "Require data source and resource frontmatter subcategory.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-require-schema-ordering", "Require schema attribute lists to be alphabetically ordered (requires -enable-contents-check).")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-warn-deprecated-features", "Warn about deprecated frontmatter and files that can be removed.")
 	opts.Flush()
 
 	helpText := fmt.Sprintf(`
@@ -103,6 +105,7 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.BoolVar(&config.RequireGuideSubcategory, "require-guide-subcategory", false, "")
 	flags.BoolVar(&config.RequireResourceSubcategory, "require-resource-subcategory", false, "")
 	flags.BoolVar(&config.RequireSchemaOrdering, "require-schema-ordering", false, "")
+	flags.BoolVar(&config.WarnDeprecatedFeatures, "warn-deprecated-features", false, "")
 
 	if err := flags.Parse(args); err != nil {
 		flags.Usage()
@@ -238,15 +241,17 @@ Check that the current working directory or provided path is prefixed with terra
 		LegacyDataSourceFile: &check.LegacyDataSourceFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedResourceSubcategories,
-				RequireSubcategory:   config.RequireResourceSubcategory,
+				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireSubcategory:     config.RequireResourceSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 		},
 		LegacyGuideFile: &check.LegacyGuideFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedGuideSubcategories,
-				RequireSubcategory:   config.RequireGuideSubcategory,
+				AllowedSubcategories:   allowedGuideSubcategories,
+				RequireSubcategory:     config.RequireGuideSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 		},
 		LegacyIndexFile: &check.LegacyIndexFileOptions{
@@ -259,8 +264,9 @@ Check that the current working directory or provided path is prefixed with terra
 			},
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedResourceSubcategories,
-				RequireSubcategory:   config.RequireResourceSubcategory,
+				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireSubcategory:     config.RequireResourceSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 			ProviderName: config.ProviderName,
 		},
@@ -269,15 +275,17 @@ Check that the current working directory or provided path is prefixed with terra
 		RegistryDataSourceFile: &check.RegistryDataSourceFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedResourceSubcategories,
-				RequireSubcategory:   config.RequireResourceSubcategory,
+				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireSubcategory:     config.RequireResourceSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 		},
 		RegistryGuideFile: &check.RegistryGuideFileOptions{
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedGuideSubcategories,
-				RequireSubcategory:   config.RequireGuideSubcategory,
+				AllowedSubcategories:   allowedGuideSubcategories,
+				RequireSubcategory:     config.RequireGuideSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 		},
 		RegistryIndexFile: &check.RegistryIndexFileOptions{
@@ -290,8 +298,9 @@ Check that the current working directory or provided path is prefixed with terra
 			},
 			FileOptions: fileOpts,
 			FrontMatter: &check.FrontMatterOptions{
-				AllowedSubcategories: allowedResourceSubcategories,
-				RequireSubcategory:   config.RequireResourceSubcategory,
+				AllowedSubcategories:   allowedResourceSubcategories,
+				RequireSubcategory:     config.RequireResourceSubcategory,
+				WarnDeprecatedFeatures: config.WarnDeprecatedFeatures,
 			},
 			ProviderName: config.ProviderName,
 		},

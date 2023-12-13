@@ -47,6 +47,17 @@ func TestLegacyIndexFileCheck(t *testing.T) {
 			Path:        "index_without_layout.html.markdown",
 			ExpectError: true,
 		},
+		{
+			Name:     "warn about frontmatter deprecated layout",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "index.html.markdown",
+			Options: &LegacyIndexFileOptions{
+				FrontMatter: &FrontMatterOptions{
+					WarnDeprecatedFeatures: true,
+				},
+			},
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {

@@ -41,6 +41,17 @@ func TestLegacyDataSourceFileCheck(t *testing.T) {
 			Path:        "data_source_without_layout.html.markdown",
 			ExpectError: true,
 		},
+		{
+			Name:     "warn about frontmatter deprecated layout",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "data_source.html.markdown",
+			Options: &LegacyDataSourceFileOptions{
+				FrontMatter: &FrontMatterOptions{
+					WarnDeprecatedFeatures: true,
+				},
+			},
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {

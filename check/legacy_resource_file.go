@@ -52,6 +52,10 @@ func NewLegacyResourceFileCheck(opts *LegacyResourceFileOptions) *LegacyResource
 	check.Options.FrontMatter.RequireLayout = true
 	check.Options.FrontMatter.RequirePageTitle = true
 
+	if check.Options.FrontMatter.WarnDeprecatedFeatures {
+		check.Options.FrontMatter.RequireLayout = false
+	}
+
 	return check
 }
 

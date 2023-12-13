@@ -46,6 +46,17 @@ func TestLegacyGuideFileCheck(t *testing.T) {
 			Path:        "guide_without_layout.html.markdown",
 			ExpectError: true,
 		},
+		{
+			Name:     "warn about frontmatter deprecated layout",
+			BasePath: "testdata/valid-legacy-files",
+			Path:     "guide.html.markdown",
+			Options: &LegacyGuideFileOptions{
+				FrontMatter: &FrontMatterOptions{
+					WarnDeprecatedFeatures: true,
+				},
+			},
+			ExpectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {
