@@ -70,12 +70,32 @@ func TestCheck(t *testing.T) {
 				testCase.Options.DataSourceFileMismatch.ProviderName = "test"
 			}
 
+			if testCase.Options.FunctionFileMismatch == nil {
+				testCase.Options.FunctionFileMismatch = &FileMismatchOptions{}
+			}
+
+			if testCase.Options.FunctionFileMismatch.FileOptions == nil {
+				testCase.Options.FunctionFileMismatch.FileOptions = fileOpts
+			}
+
+			if testCase.Options.FunctionFileMismatch.ProviderName == "" {
+				testCase.Options.FunctionFileMismatch.ProviderName = "test"
+			}
+
 			if testCase.Options.LegacyDataSourceFile == nil {
 				testCase.Options.LegacyDataSourceFile = &LegacyDataSourceFileOptions{}
 			}
 
 			if testCase.Options.LegacyDataSourceFile.FileOptions == nil {
 				testCase.Options.LegacyDataSourceFile.FileOptions = fileOpts
+			}
+
+			if testCase.Options.LegacyFunctionFile == nil {
+				testCase.Options.LegacyFunctionFile = &LegacyFunctionFileOptions{}
+			}
+
+			if testCase.Options.LegacyFunctionFile.FileOptions == nil {
+				testCase.Options.LegacyFunctionFile.FileOptions = fileOpts
 			}
 
 			if testCase.Options.LegacyGuideFile == nil {
@@ -112,6 +132,14 @@ func TestCheck(t *testing.T) {
 
 			if testCase.Options.RegistryDataSourceFile.FileOptions == nil {
 				testCase.Options.RegistryDataSourceFile.FileOptions = fileOpts
+			}
+
+			if testCase.Options.RegistryFunctionFile == nil {
+				testCase.Options.RegistryFunctionFile = &RegistryFunctionFileOptions{}
+			}
+
+			if testCase.Options.RegistryFunctionFile.FileOptions == nil {
+				testCase.Options.RegistryFunctionFile.FileOptions = fileOpts
 			}
 
 			if testCase.Options.RegistryGuideFile == nil {
