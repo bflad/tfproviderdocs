@@ -26,8 +26,10 @@ type CheckCommandConfig struct {
 	EnableContentsCheck              bool
 	IgnoreCdktfMissingFiles          bool
 	IgnoreFileMismatchDataSources    string
+	IgnoreFileMismatchFunctions      string
 	IgnoreFileMismatchResources      string
 	IgnoreFileMissingDataSources     string
+	IgnoreFileMissingFunctions       string
 	IgnoreFileMissingResources       string
 	LogLevel                         string
 	Path                             string
@@ -55,8 +57,10 @@ func (*CheckCommand) Help() string {
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-enable-contents-check", "(Experimental) Enable contents checking.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-cdktf-missing-files", "Ignore checks for missing CDK for Terraform documentation files when iteratively introducing them in large providers.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-data-sources", "Comma separated list of data sources to ignore mismatched/extra files.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-functions", "Comma separated list of functions to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-mismatch-resources", "Comma separated list of resources to ignore mismatched/extra files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-data-sources", "Comma separated list of data sources to ignore missing files.")
+	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-functions", "Comma separated list of functions to ignore missing files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-ignore-file-missing-resources", "Comma separated list of resources to ignore missing files.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-name", "Terraform Provider short name (e.g. aws). Automatically determined if -provider-source is given or if current working directory or provided path is prefixed with terraform-provider-*.")
 	fmt.Fprintf(opts, CommandHelpOptionFormat, "-provider-source", "Terraform Provider source address (e.g. registry.terraform.io/hashicorp/aws) for Terraform CLI 0.13 and later -providers-schema-json. Automatically sets -provider-name by dropping hostname and namespace prefix.")
@@ -94,8 +98,10 @@ func (c *CheckCommand) Run(args []string) int {
 	flags.BoolVar(&config.EnableContentsCheck, "enable-contents-check", false, "")
 	flags.BoolVar(&config.IgnoreCdktfMissingFiles, "ignore-cdktf-missing-files", false, "")
 	flags.StringVar(&config.IgnoreFileMismatchDataSources, "ignore-file-mismatch-data-sources", "", "")
+	flags.StringVar(&config.IgnoreFileMismatchFunctions, "ignore-file-mismatch-functions", "", "")
 	flags.StringVar(&config.IgnoreFileMismatchResources, "ignore-file-mismatch-resources", "", "")
 	flags.StringVar(&config.IgnoreFileMissingDataSources, "ignore-file-missing-data-sources", "", "")
+	flags.StringVar(&config.IgnoreFileMissingFunctions, "ignore-file-missing-functions", "", "")
 	flags.StringVar(&config.IgnoreFileMissingResources, "ignore-file-missing-resources", "", "")
 	flags.StringVar(&config.ProviderName, "provider-name", "", "")
 	flags.StringVar(&config.ProviderSource, "provider-source", "", "")
@@ -188,6 +194,11 @@ func (c *CheckCommand) Run(args []string) int {
 		ignoreFileMismatchDataSources = strings.Split(v, ",")
 	}
 
+	var ignoreFileMismatchFunctions []string
+	if v := config.IgnoreFileMismatchFunctions; v != "" {
+		ignoreFileMismatchFunctions = strings.Split(v, ",")
+	}
+
 	var ignoreFileMismatchResources []string
 	if v := config.IgnoreFileMismatchResources; v != "" {
 		ignoreFileMismatchResources = strings.Split(v, ",")
@@ -198,12 +209,17 @@ func (c *CheckCommand) Run(args []string) int {
 		ignoreFileMissingDataSources = strings.Split(v, ",")
 	}
 
+	var ignoreFileMissingFunctions []string
+	if v := config.IgnoreFileMissingFunctions; v != "" {
+		ignoreFileMissingFunctions = strings.Split(v, ",")
+	}
+
 	var ignoreFileMissingResources []string
 	if v := config.IgnoreFileMissingResources; v != "" {
 		ignoreFileMissingResources = strings.Split(v, ",")
 	}
 
-	var schemaDataSources, schemaResources map[string]*tfjson.Schema
+	var schemaDataSources, schemaResources, schemaFunctions map[string]*tfjson.Schema
 	if config.ProvidersSchemaJson != "" {
 		ps, err := providerSchemas(config.ProvidersSchemaJson)
 
@@ -221,6 +237,7 @@ Check that the current working directory or provided path is prefixed with terra
 		}
 
 		schemaDataSources = providerSchemasDataSources(ps, config.ProviderName, config.ProviderSource)
+		schemaFunctions = providerSchemasFunctions(ps, config.ProviderName, config.ProviderSource)
 		schemaResources = providerSchemasResources(ps, config.ProviderName, config.ProviderSource)
 	}
 
@@ -234,6 +251,13 @@ Check that the current working directory or provided path is prefixed with terra
 			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeDataSource,
 			Schemas:            schemaDataSources,
+		},
+		FunctionFileMismatch: &check.FileMismatchOptions{
+			IgnoreFileMismatch: ignoreFileMismatchFunctions,
+			IgnoreFileMissing:  ignoreFileMissingFunctions,
+			ProviderName:       config.ProviderName,
+			ResourceType:       check.ResourceTypeFunction,
+			Schemas:            schemaFunctions,
 		},
 		LegacyDataSourceFile: &check.LegacyDataSourceFileOptions{
 			FileOptions: fileOpts,
@@ -412,6 +436,43 @@ func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string,
 	log.Printf("[DEBUG] Found provider schema data sources: %v", dataSources)
 
 	return provider.DataSourceSchemas
+}
+
+// providerSchemasFunctions returns all functions from a terraform providers schema -json provider.
+//
+// In order to shim into the existing Mismatched/Missing checks, this function will
+// return a map where the keys are function names and the values are nil tfjson.Schema
+// structs.
+func providerSchemasFunctions(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+	if ps == nil || ps.Schemas == nil {
+		return nil
+	}
+
+	provider, ok := ps.Schemas[providerSource]
+
+	if !ok {
+		provider, ok = ps.Schemas[providerName]
+	}
+
+	if !ok {
+		log.Printf("[WARN] Provider source (%s) and name (%s) not found in provider schema", providerSource, providerName)
+		return nil
+	}
+
+	functions := make([]string, 0, len(provider.Functions))
+	// shim function names into the same type resource and data source schemas use
+	funcMap := make(map[string]*tfjson.Schema)
+
+	for name := range provider.Functions {
+		functions = append(functions, name)
+		funcMap[name] = nil
+	}
+
+	sort.Strings(functions)
+
+	log.Printf("[DEBUG] Found provider schema functions: %v", functions)
+
+	return funcMap
 }
 
 // providerSchemasResources returns all resources from a terraform providers schema -json provider.
