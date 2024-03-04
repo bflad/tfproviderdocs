@@ -15,7 +15,7 @@ const (
 
 	LegacyIndexDirectory       = `website/docs`
 	LegacyDataSourcesDirectory = `d`
-	LegacyFunctionsDirectory   = `f`
+	LegacyFunctionsDirectory   = `functions`
 	LegacyGuidesDirectory      = `guides`
 	LegacyResourcesDirectory   = `r`
 
