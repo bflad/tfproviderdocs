@@ -139,7 +139,7 @@ func TestProviderSchemasDataSources(t *testing.T) {
 		ProviderName    string
 		ProviderSource  string
 		ProvidersSchema *tfjson.ProviderSchemas
-		Expect          map[string]*tfjson.Schema
+		Expect          []string
 	}{
 		{
 			Name:            "no providers schemas",
@@ -187,10 +187,10 @@ func TestProviderSchemasDataSources(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_data_source1": {},
-				"test_data_source2": {},
-				"test_data_source3": {},
+			Expect: []string{
+				"test_data_source1",
+				"test_data_source2",
+				"test_data_source3",
 			},
 		},
 		{
@@ -213,10 +213,10 @@ func TestProviderSchemasDataSources(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_data_source1": {},
-				"test_data_source2": {},
-				"test_data_source3": {},
+			Expect: []string{
+				"test_data_source1",
+				"test_data_source2",
+				"test_data_source3",
 			},
 		},
 	}
@@ -239,7 +239,7 @@ func TestProviderSchemasFunctions(t *testing.T) {
 		ProviderName    string
 		ProviderSource  string
 		ProvidersSchema *tfjson.ProviderSchemas
-		Expect          map[string]*tfjson.Schema
+		Expect          []string
 	}{
 		{
 			Name:            "no providers schemas",
@@ -292,10 +292,10 @@ func TestProviderSchemasFunctions(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_function1": nil,
-				"test_function2": nil,
-				"test_function3": nil,
+			Expect: []string{
+				"test_function1",
+				"test_function2",
+				"test_function3",
 			},
 		},
 		{
@@ -323,10 +323,10 @@ func TestProviderSchemasFunctions(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_function1": nil,
-				"test_function2": nil,
-				"test_function3": nil,
+			Expect: []string{
+				"test_function1",
+				"test_function2",
+				"test_function3",
 			},
 		},
 	}
@@ -349,7 +349,7 @@ func TestProviderSchemasResources(t *testing.T) {
 		ProviderName    string
 		ProviderSource  string
 		ProvidersSchema *tfjson.ProviderSchemas
-		Expect          map[string]*tfjson.Schema
+		Expect          []string
 	}{
 		{
 			Name:            "no providers schemas",
@@ -397,10 +397,10 @@ func TestProviderSchemasResources(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_resource1": {},
-				"test_resource2": {},
-				"test_resource3": {},
+			Expect: []string{
+				"test_resource1",
+				"test_resource2",
+				"test_resource3",
 			},
 		},
 		{
@@ -423,10 +423,10 @@ func TestProviderSchemasResources(t *testing.T) {
 					},
 				},
 			},
-			Expect: map[string]*tfjson.Schema{
-				"test_resource1": {},
-				"test_resource2": {},
-				"test_resource3": {},
+			Expect: []string{
+				"test_resource1",
+				"test_resource2",
+				"test_resource3",
 			},
 		},
 	}

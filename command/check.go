@@ -219,7 +219,7 @@ func (c *CheckCommand) Run(args []string) int {
 		ignoreFileMissingResources = strings.Split(v, ",")
 	}
 
-	var schemaDataSources, schemaResources, schemaFunctions map[string]*tfjson.Schema
+	var dataSourceNames, resourceNames, functionNames []string
 	if config.ProvidersSchemaJson != "" {
 		ps, err := providerSchemas(config.ProvidersSchemaJson)
 
@@ -236,9 +236,9 @@ Check that the current working directory or provided path is prefixed with terra
 			return 1
 		}
 
-		schemaDataSources = providerSchemasDataSources(ps, config.ProviderName, config.ProviderSource)
-		schemaFunctions = providerSchemasFunctions(ps, config.ProviderName, config.ProviderSource)
-		schemaResources = providerSchemasResources(ps, config.ProviderName, config.ProviderSource)
+		dataSourceNames = providerSchemasDataSources(ps, config.ProviderName, config.ProviderSource)
+		functionNames = providerSchemasFunctions(ps, config.ProviderName, config.ProviderSource)
+		resourceNames = providerSchemasResources(ps, config.ProviderName, config.ProviderSource)
 	}
 
 	fileOpts := &check.FileOptions{
@@ -250,14 +250,14 @@ Check that the current working directory or provided path is prefixed with terra
 			IgnoreFileMissing:  ignoreFileMissingDataSources,
 			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeDataSource,
-			Schemas:            schemaDataSources,
+			ResourceNames:      dataSourceNames,
 		},
 		FunctionFileMismatch: &check.FileMismatchOptions{
 			IgnoreFileMismatch: ignoreFileMismatchFunctions,
 			IgnoreFileMissing:  ignoreFileMissingFunctions,
 			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeFunction,
-			Schemas:            schemaFunctions,
+			ResourceNames:      functionNames,
 		},
 		LegacyDataSourceFile: &check.LegacyDataSourceFileOptions{
 			FileOptions: fileOpts,
@@ -324,7 +324,7 @@ Check that the current working directory or provided path is prefixed with terra
 			IgnoreFileMissing:  ignoreFileMissingResources,
 			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeResource,
-			Schemas:            schemaResources,
+			ResourceNames:      resourceNames,
 		},
 		IgnoreCdktfMissingFiles: config.IgnoreCdktfMissingFiles,
 	}
@@ -408,8 +408,8 @@ func providerSchemas(path string) (*tfjson.ProviderSchemas, error) {
 	return &ps, nil
 }
 
-// providerSchemasDataSources returns all data sources from a terraform providers schema -json provider.
-func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+// providerSchemasDataSources returns all data source names from a terraform providers schema -json provider.
+func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) []string {
 	if ps == nil || ps.Schemas == nil {
 		return nil
 	}
@@ -435,15 +435,11 @@ func providerSchemasDataSources(ps *tfjson.ProviderSchemas, providerName string,
 
 	log.Printf("[DEBUG] Found provider schema data sources: %v", dataSources)
 
-	return provider.DataSourceSchemas
+	return dataSources
 }
 
-// providerSchemasFunctions returns all functions from a terraform providers schema -json provider.
-//
-// In order to shim into the existing Mismatched/Missing checks, this function will
-// return a map where the keys are function names and the values are nil tfjson.Schema
-// structs.
-func providerSchemasFunctions(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+// providerSchemasFunctions returns all function names from a terraform providers schema -json provider.
+func providerSchemasFunctions(ps *tfjson.ProviderSchemas, providerName string, providerSource string) []string {
 	if ps == nil || ps.Schemas == nil {
 		return nil
 	}
@@ -460,23 +456,20 @@ func providerSchemasFunctions(ps *tfjson.ProviderSchemas, providerName string, p
 	}
 
 	functions := make([]string, 0, len(provider.Functions))
-	// shim function names into the same type resource and data source schemas use
-	funcMap := make(map[string]*tfjson.Schema)
 
 	for name := range provider.Functions {
 		functions = append(functions, name)
-		funcMap[name] = nil
 	}
 
 	sort.Strings(functions)
 
 	log.Printf("[DEBUG] Found provider schema functions: %v", functions)
 
-	return funcMap
+	return functions
 }
 
-// providerSchemasResources returns all resources from a terraform providers schema -json provider.
-func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) map[string]*tfjson.Schema {
+// providerSchemasResources returns all resource names from a terraform providers schema -json provider.
+func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string, providerSource string) []string {
 	if ps == nil || ps.Schemas == nil {
 		return nil
 	}
@@ -500,7 +493,7 @@ func providerSchemasResources(ps *tfjson.ProviderSchemas, providerName string, p
 
 	sort.Strings(resources)
 
-	log.Printf("[DEBUG] Found provider schema data sources: %v", resources)
+	log.Printf("[DEBUG] Found provider schema resources: %v", resources)
 
-	return provider.ResourceSchemas
+	return resources
 }

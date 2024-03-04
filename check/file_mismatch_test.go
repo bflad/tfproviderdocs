@@ -1,34 +1,31 @@
 package check
 
 import (
-	"reflect"
 	"testing"
-
-	tfjson "github.com/hashicorp/terraform-json"
 )
 
 func TestFileHasResource(t *testing.T) {
 	testCases := []struct {
 		Name      string
 		File      string
-		Resources map[string]*tfjson.Schema
+		Resources []string
 		Expect    bool
 	}{
 		{
 			Name: "found",
 			File: "resource1.md",
-			Resources: map[string]*tfjson.Schema{
-				"test_resource1": {},
-				"test_resource2": {},
+			Resources: []string{
+				"test_resource1",
+				"test_resource2",
 			},
 			Expect: true,
 		},
 		{
 			Name: "not found",
 			File: "resource1.md",
-			Resources: map[string]*tfjson.Schema{
-				"test_resource2": {},
-				"test_resource3": {},
+			Resources: []string{
+				"test_resource2",
+				"test_resource3",
 			},
 			Expect: false,
 		},
@@ -101,9 +98,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			},
 			Options: &FileMismatchOptions{
 				ProviderName: "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 		},
@@ -116,9 +113,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			},
 			Options: &FileMismatchOptions{
 				ProviderName: "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 			ExpectError: true,
@@ -133,9 +130,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			Options: &FileMismatchOptions{
 				IgnoreFileMismatch: []string{"test_resource3"},
 				ProviderName:       "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 		},
@@ -146,9 +143,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			},
 			Options: &FileMismatchOptions{
 				ProviderName: "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 			ExpectError: true,
@@ -161,9 +158,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			Options: &FileMismatchOptions{
 				IgnoreFileMissing: []string{"test_resource2"},
 				ProviderName:      "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 		},
@@ -171,9 +168,9 @@ func TestFileMismatchCheck(t *testing.T) {
 			Name: "no files",
 			Options: &FileMismatchOptions{
 				ProviderName: "test",
-				Schemas: map[string]*tfjson.Schema{
-					"test_resource1": {},
-					"test_resource2": {},
+				ResourceNames: []string{
+					"test_resource1",
+					"test_resource2",
 				},
 			},
 		},
@@ -237,42 +234,6 @@ func TestResourceHasFile(t *testing.T) {
 
 			if got != want {
 				t.Errorf("expected %t, got %t", want, got)
-			}
-		})
-	}
-}
-
-func TestResourceNames(t *testing.T) {
-	testCases := []struct {
-		Name      string
-		Resources map[string]*tfjson.Schema
-		Expect    []string
-	}{
-		{
-			Name:      "empty",
-			Resources: map[string]*tfjson.Schema{},
-			Expect:    []string{},
-		},
-		{
-			Name: "multiple",
-			Resources: map[string]*tfjson.Schema{
-				"test_resource1": {},
-				"test_resource2": {},
-			},
-			Expect: []string{
-				"test_resource1",
-				"test_resource2",
-			},
-		},
-	}
-
-	for _, testCase := range testCases {
-		t.Run(testCase.Name, func(t *testing.T) {
-			got := resourceNames(testCase.Resources)
-			want := testCase.Expect
-
-			if !reflect.DeepEqual(got, want) {
-				t.Errorf("expected %v, got %v", want, got)
 			}
 		})
 	}
