@@ -1,3 +1,13 @@
+# v0.12.0
+
+FEATURES
+
+* check: Support provider-defined function directory structure (#97)
+
+ENHANCEMENTS
+
+* check: Add `-ignore-file-mismatch-functions` and `-ignore-file-missing-functions` options (#97)
+
 # v0.11.1
 
 BUG FIXES
