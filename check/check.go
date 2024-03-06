@@ -10,6 +10,7 @@ import (
 
 const (
 	ResourceTypeDataSource = "data source"
+	ResourceTypeFunction   = "function"
 	ResourceTypeResource   = "resource"
 
 	// Terraform Registry Storage Limits
@@ -25,7 +26,10 @@ type Check struct {
 type CheckOptions struct {
 	DataSourceFileMismatch *FileMismatchOptions
 
+	FunctionFileMismatch *FileMismatchOptions
+
 	LegacyDataSourceFile *LegacyDataSourceFileOptions
+	LegacyFunctionFile   *LegacyFunctionFileOptions
 	LegacyGuideFile      *LegacyGuideFileOptions
 	LegacyIndexFile      *LegacyIndexFileOptions
 	LegacyResourceFile   *LegacyResourceFileOptions
@@ -34,6 +38,7 @@ type CheckOptions struct {
 	ProviderSource string
 
 	RegistryDataSourceFile *RegistryDataSourceFileOptions
+	RegistryFunctionFile   *RegistryFunctionFileOptions
 	RegistryGuideFile      *RegistryGuideFileOptions
 	RegistryIndexFile      *RegistryIndexFileOptions
 	RegistryResourceFile   *RegistryResourceFileOptions
@@ -76,6 +81,16 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if err := NewRegistryDataSourceFileCheck(check.Options.RegistryDataSourceFile).RunAll(files); err != nil {
+			result = multierror.Append(result, err)
+		}
+	}
+
+	if files, ok := directories[fmt.Sprintf("%s/%s", RegistryIndexDirectory, RegistryFunctionsDirectory)]; ok {
+		if err := NewFileMismatchCheck(check.Options.FunctionFileMismatch).Run(files); err != nil {
+			result = multierror.Append(result, err)
+		}
+
+		if err := NewRegistryFunctionFileCheck(check.Options.RegistryFunctionFile).RunAll(files); err != nil {
 			result = multierror.Append(result, err)
 		}
 	}
@@ -129,6 +144,7 @@ func (check *Check) Run(directories map[string][]string) error {
 	}
 
 	legacyDataSourcesFiles, legacyDataSourcesOk := directories[fmt.Sprintf("%s/%s", LegacyIndexDirectory, LegacyDataSourcesDirectory)]
+	legacyFunctionsFiles, legacyFunctionsOk := directories[fmt.Sprintf("%s/%s", LegacyIndexDirectory, LegacyFunctionsDirectory)]
 	legacyResourcesFiles, legacyResourcesOk := directories[fmt.Sprintf("%s/%s", LegacyIndexDirectory, LegacyResourcesDirectory)]
 
 	if legacyDataSourcesOk {
@@ -137,6 +153,16 @@ func (check *Check) Run(directories map[string][]string) error {
 		}
 
 		if err := NewLegacyDataSourceFileCheck(check.Options.LegacyDataSourceFile).RunAll(legacyDataSourcesFiles); err != nil {
+			result = multierror.Append(result, err)
+		}
+	}
+
+	if legacyFunctionsOk {
+		if err := NewFileMismatchCheck(check.Options.FunctionFileMismatch).Run(legacyFunctionsFiles); err != nil {
+			result = multierror.Append(result, err)
+		}
+
+		if err := NewLegacyFunctionFileCheck(check.Options.LegacyFunctionFile).RunAll(legacyFunctionsFiles); err != nil {
 			result = multierror.Append(result, err)
 		}
 	}

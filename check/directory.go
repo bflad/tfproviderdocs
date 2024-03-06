@@ -15,11 +15,13 @@ const (
 
 	LegacyIndexDirectory       = `website/docs`
 	LegacyDataSourcesDirectory = `d`
+	LegacyFunctionsDirectory   = `functions`
 	LegacyGuidesDirectory      = `guides`
 	LegacyResourcesDirectory   = `r`
 
 	RegistryIndexDirectory       = `docs`
 	RegistryDataSourcesDirectory = `data-sources`
+	RegistryFunctionsDirectory   = `functions`
 	RegistryGuidesDirectory      = `guides`
 	RegistryResourcesDirectory   = `resources`
 )
@@ -27,6 +29,7 @@ const (
 var ValidLegacyDirectories = []string{
 	LegacyIndexDirectory,
 	LegacyIndexDirectory + "/" + LegacyDataSourcesDirectory,
+	LegacyIndexDirectory + "/" + LegacyFunctionsDirectory,
 	LegacyIndexDirectory + "/" + LegacyGuidesDirectory,
 	LegacyIndexDirectory + "/" + LegacyResourcesDirectory,
 }
@@ -34,6 +37,7 @@ var ValidLegacyDirectories = []string{
 var ValidRegistryDirectories = []string{
 	RegistryIndexDirectory,
 	RegistryIndexDirectory + "/" + RegistryDataSourcesDirectory,
+	RegistryIndexDirectory + "/" + RegistryFunctionsDirectory,
 	RegistryIndexDirectory + "/" + RegistryGuidesDirectory,
 	RegistryIndexDirectory + "/" + RegistryResourcesDirectory,
 }
@@ -48,12 +52,14 @@ var ValidCdktfLanguages = []string{
 
 var ValidLegacySubdirectories = []string{
 	LegacyDataSourcesDirectory,
+	LegacyFunctionsDirectory,
 	LegacyGuidesDirectory,
 	LegacyResourcesDirectory,
 }
 
 var ValidRegistrySubdirectories = []string{
 	RegistryDataSourcesDirectory,
+	RegistryFunctionsDirectory,
 	RegistryGuidesDirectory,
 	RegistryResourcesDirectory,
 }

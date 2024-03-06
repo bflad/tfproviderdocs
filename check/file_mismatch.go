@@ -3,10 +3,8 @@ package check
 import (
 	"fmt"
 	"log"
-	"sort"
 
 	"github.com/hashicorp/go-multierror"
-	tfjson "github.com/hashicorp/terraform-json"
 )
 
 type FileMismatchOptions struct {
@@ -20,7 +18,7 @@ type FileMismatchOptions struct {
 
 	ResourceType string
 
-	Schemas map[string]*tfjson.Schema
+	ResourceNames []string
 }
 
 type FileMismatchCheck struct {
@@ -49,8 +47,8 @@ func (check *FileMismatchCheck) Run(files []string) error {
 		return nil
 	}
 
-	if len(check.Options.Schemas) == 0 {
-		log.Printf("[DEBUG] Skipping %s file mismatch checks due to missing schemas", check.Options.ResourceType)
+	if len(check.Options.ResourceNames) == 0 {
+		log.Printf("[DEBUG] Skipping %s file mismatch checks, no resources found", check.Options.ResourceType)
 		return nil
 	}
 
@@ -58,7 +56,7 @@ func (check *FileMismatchCheck) Run(files []string) error {
 	var missingFiles []string
 
 	for _, file := range files {
-		if fileHasResource(check.Options.Schemas, check.Options.ProviderName, file) {
+		if fileHasResource(check.Options.ResourceNames, check.Options.ProviderName, file) {
 			continue
 		}
 
@@ -69,7 +67,7 @@ func (check *FileMismatchCheck) Run(files []string) error {
 		extraFiles = append(extraFiles, file)
 	}
 
-	for _, resourceName := range resourceNames(check.Options.Schemas) {
+	for _, resourceName := range check.Options.ResourceNames {
 		if resourceHasFile(files, check.Options.ProviderName, resourceName) {
 			continue
 		}
@@ -116,9 +114,11 @@ func (check *FileMismatchCheck) IgnoreFileMissing(resourceName string) bool {
 	return false
 }
 
-func fileHasResource(schemaResources map[string]*tfjson.Schema, providerName, file string) bool {
-	if _, ok := schemaResources[fileResourceName(providerName, file)]; ok {
-		return true
+func fileHasResource(resourceNames []string, providerName, file string) bool {
+	for _, name := range resourceNames {
+		if name == fileResourceName(providerName, file) {
+			return true
+		}
 	}
 
 	return false
@@ -141,16 +141,4 @@ func resourceHasFile(files []string, providerName, resourceName string) bool {
 	}
 
 	return found
-}
-
-func resourceNames(resources map[string]*tfjson.Schema) []string {
-	names := make([]string, 0, len(resources))
-
-	for name := range resources {
-		names = append(names, name)
-	}
-
-	sort.Strings(names)
-
-	return names
 }
