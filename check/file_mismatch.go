@@ -127,6 +127,10 @@ func fileHasResource(resourceNames []string, providerName, file string) bool {
 func fileResourceName(providerName, fileName string) string {
 	resourceSuffix := TrimFileExtension(fileName)
 
+	// providerName is empty for functions
+	if providerName == "" {
+		return resourceSuffix
+	}
 	return fmt.Sprintf("%s_%s", providerName, resourceSuffix)
 }
 
