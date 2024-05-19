@@ -1,3 +1,9 @@
+# v0.12.1
+
+BUG FIXES
+
+* check: Removed errant provider name prefix for function file naming mismatch (#99)
+
 # v0.12.0
 
 FEATURES
