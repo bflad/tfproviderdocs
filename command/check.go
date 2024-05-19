@@ -255,7 +255,6 @@ Check that the current working directory or provided path is prefixed with terra
 		FunctionFileMismatch: &check.FileMismatchOptions{
 			IgnoreFileMismatch: ignoreFileMismatchFunctions,
 			IgnoreFileMissing:  ignoreFileMissingFunctions,
-			ProviderName:       config.ProviderName,
 			ResourceType:       check.ResourceTypeFunction,
 			ResourceNames:      functionNames,
 		},
