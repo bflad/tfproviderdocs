@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-json v0.21.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mitchellh/cli v1.1.5
-	github.com/yuin/goldmark v1.5.4
+	github.com/yuin/goldmark v1.7.1
 	github.com/yuin/goldmark-meta v1.1.0
 	gopkg.in/yaml.v2 v2.4.0
 )
