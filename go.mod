@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/bmatcuk/doublestar v1.3.4
-	github.com/hashicorp/go-hclog v1.5.0
+	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/terraform-json v0.21.0
 	github.com/mattn/go-colorable v0.1.13
